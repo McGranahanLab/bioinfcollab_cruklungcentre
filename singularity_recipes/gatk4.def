@@ -1,0 +1,30 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        gatk        v.4.1.8.1          https://github.com/broadinstitute/gatk/
+
+%labels
+        CREATOR		Maria Litovchenko
+	    ORGANIZATION	UCL
+
+%post
+        apt-get -qq -y update
+        apt-get -qq -y install wget gcc libncurses5-dev zlib1g-dev libbz2-dev \
+                               liblzma-dev make default-jdk unzip
+
+        apt-get -qq -y install software-properties-common
+        add-apt-repository ppa:deadsnakes/ppa
+        apt-get -qq -y update
+        apt-get -qq -y install python3.8 python-setuptools build-essential \
+                               python3-dev python3-pip
+
+        cd bin
+
+	    wget https://github.com/broadinstitute/gatk/releases/download/4.1.8.1/gatk-4.1.8.1.zip
+        unzip gatk-4.1.8.1.zip
+        rm gatk-4.1.8.1.zip
+
+%environment
+        PATH=$PATH:/bin/gatk-4.1.8.1/:$PATH

@@ -1,0 +1,29 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        bcftools        v.1.10.2          http://www.htslib.org/
+
+%labels
+        CREATOR		Maria Litovchenko
+	    ORGANIZATION	UCL
+
+%post
+        apt-get -qq -y update
+        apt-get -qq -y install wget gcc libncurses5-dev zlib1g-dev libbz2-dev \
+                               liblzma-dev make tabix
+
+        cd bin
+        wget https://github.com/samtools/bcftools/releases/download/1.10.2/bcftools-1.10.2.tar.bz2
+        tar -xf bcftools-1.10.2.tar.bz2
+        cd bcftools-1.10.2
+        ./configure
+        make
+        make install
+
+%environment
+        PATH=$PATH:/bin/bcftools-1.10.2/bin:$PATH
+
+%test
+        bcftools --help

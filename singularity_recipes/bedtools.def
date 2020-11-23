@@ -1,0 +1,25 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        bedtools        v.2.29.2          https://github.com/arq5x/bedtools2/
+
+%labels
+        CREATOR		Maria Litovchenko
+	    ORGANIZATION	UCL
+
+%post
+        apt-get -qq -y update
+        apt-get -qq -y install wget gcc libncurses5-dev zlib1g-dev libbz2-dev \
+                               liblzma-dev make tabix
+
+        cd bin
+        mkdir bedtools
+        cd bedtools
+        wget https://github.com/arq5x/bedtools2/releases/download/v2.29.2/bedtools.static.binary
+        mv bedtools.static.binary bedtools
+        chmod a+x bedtools
+
+%environment
+        PATH=$PATH:/bin/bedtools/:$PATH

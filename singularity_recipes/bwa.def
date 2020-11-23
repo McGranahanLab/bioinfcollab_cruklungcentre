@@ -1,0 +1,41 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        bwa             v.0.7.17 (r1188)        https://github.com/lh3/bwa
+
+        Support software:
+        samtools        v.1.10          http://www.htslib.org/
+        picard          v2.23.3         https://broadinstitute.github.io/picard/
+        Run picard with java -jar /bin/picard.jar
+
+%labels
+        CREATOR Maria Litovchenko
+
+%post
+        apt-get -qq -y update
+        apt-get -qq -y install wget gcc libncurses5-dev zlib1g-dev libbz2-dev \
+                               liblzma-dev make default-jdk tabix
+
+        cd bin/
+        wget https://github.com/broadinstitute/picard/releases/download/2.23.3/picard.jar
+
+        wget https://github.com/lh3/bwa/releases/download/v0.7.17/bwa-0.7.17.tar.bz2
+        tar -xf bwa-0.7.17.tar.bz2
+        rm bwa-0.7.17.tar.bz2
+        cd bwa-0.7.17
+        make
+
+        cd ../
+        wget https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2
+        tar -xf samtools-1.10.tar.bz2
+        rm samtools-1.10.tar.bz2
+        cd samtools-1.10
+        ./configure
+        make
+        make install
+
+%environment
+        export PATH=$PATH:/bin/samtools-1.10/bin/
+        export PATH=$PATH:/bin/bwa-0.7.17/

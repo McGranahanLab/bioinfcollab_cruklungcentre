@@ -1,0 +1,27 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        eagle2      v.2.4.1     https://alkesgroup.broadinstitute.org/Eagle/
+        run via /bin/Eagle_v2.4.1/eagle
+
+
+%labels
+        CREATOR		Maria Litovchenko
+	    ORGANIZATION	UCL
+
+%post
+        apt-get -qq -y update
+        apt-get -qq -y install wget gcc libncurses5-dev zlib1g-dev libbz2-dev \
+                               liblzma-dev make tabix
+
+        cd bin
+        wget https://alkesgroup.broadinstitute.org/Eagle/downloads/Eagle_v2.4.1.tar.gz
+        tar -xzf Eagle_v2.4.1.tar.gz
+        rm Eagle_v2.4.1.tar.gz
+        cd Eagle_v2.4.1
+        
+
+%environment
+        PATH=$PATH:/bin/Eagle_v2.4.1/:$PATH

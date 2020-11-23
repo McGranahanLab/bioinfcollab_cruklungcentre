@@ -1,0 +1,29 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+        Main software:
+        DriverPower        v.1.0.2          https://driverpower.readthedocs.io/en/latest/
+
+        Example run:
+        driverpower --help
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%runscript
+        exec /opt/conda/bin/python "$@"
+
+%post
+        apt-get update && apt-get install -y git
+
+        /opt/conda/bin/conda install --channel conda-forge --channel bioconda \
+                                     -y numpy scikit-learn=0.19.2 cython pandas \
+                                     setuptools numpy scipy \
+                                     statsmodels pybedtools pytables xgboost
+        /opt/conda/bin/conda install --channel conda-forge --channel bioconda \
+                                     --channel default -c smshuai -y driverpower
+
+%test
+    driverpower -h

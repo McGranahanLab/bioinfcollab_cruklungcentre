@@ -1,0 +1,29 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        samtools        v.1.10          http://www.htslib.org/
+
+%labels
+        CREATOR		Maria Litovchenko
+	    ORGANIZATION	UCL
+
+%post
+        apt-get -qq -y update
+        apt-get -qq -y install wget gcc libncurses5-dev zlib1g-dev libbz2-dev \
+                               liblzma-dev make tabix
+
+        cd bin
+        wget https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2
+        tar -xf samtools-1.10.tar.bz2
+        cd samtools-1.10
+        ./configure
+        make
+        make install
+
+%environment
+        PATH=$PATH:/bin/samtools-1.10/bin:$PATH
+
+%test
+        samtools --help
