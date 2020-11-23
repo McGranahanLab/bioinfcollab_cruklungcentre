@@ -5,7 +5,7 @@
 [AmpliconArchitect](https://github.com/virajbdeshpande/AmpliconArchitect)                                           | v2              | | 
 [bcftools](http://www.htslib.org/)                                                                                  | v.1.10.2        | |
 [bedtools](https://github.com/arq5x/bedtools2/)                                                                     | v2.29.2         | |
-[bwa](https://github.com/lh3/bwa) |                                                                                 | v.0.7.17 (r1188)| Additives: samtools (v.1.10), picard (v2.23.3) |
+[bwa](https://github.com/lh3/bwa)                                                                                   | v.0.7.17 (r1188)| Additives: samtools (v.1.10), picard (v2.23.3) |
 [CHISEL](https://github.com/raphael-group/chisel )                                                                  | v1              | Additives: python libraries (numpy,scipy,pandas,matplotlib,seaborn, setuptools), samtools(v.1.10), bcftools(v.1.10.2) |
 [cutadapt](https://cutadapt.readthedocs.io/en/stable/)                                                              | v2.10           | |
 [driverpower](https://driverpower.readthedocs.io/en/latest/)                                                        | v1.0.2          | |
