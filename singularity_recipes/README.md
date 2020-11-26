@@ -19,3 +19,4 @@
 [oncodrivefml](https://bitbucket.org/bbglab/oncodrivefml/src/master/)                                               | v2              | |
 [oncodriveclustl](https://bitbucket.org/bbglab/oncodriveclustl/src/master/)                                         | v1              | |
 [samtools](http://www.htslib.org/)                                                                                  | v1.10           | |
+[sratoolkit](https://github.com/ncbi/sra-tools/)                                                                    | v2.10.8         | |

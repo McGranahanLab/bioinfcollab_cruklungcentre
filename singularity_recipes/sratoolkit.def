@@ -1,0 +1,18 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        sra-toolkit        v.2.10.8          https://github.com/ncbi/sra-tools/
+
+%labels
+        CREATOR		Maria Litovchenko
+	    ORGANIZATION	UCL
+
+%post
+		apt-get update && apt-get upgrade -y
+		apt-get install -y unzip wget openjdk-8-jdk python
+		apt-get install -y sra-toolkit
+
+%help
+	singularity exec fastq-dump <arguments>
