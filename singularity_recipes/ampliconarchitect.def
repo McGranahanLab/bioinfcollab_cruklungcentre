@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: continuumio/miniconda3
+From: continuumio/miniconda
 
 
 %help
@@ -36,11 +36,10 @@ export MOSEKLM_LICENSE_FILE=/mosek/8/licenses
 		libssl-dev gcc libz-dev zlib1g-dev samtools git-all wget \
 		build-essential gfortran samtools python-dev
 
-	/opt/conda/bin/conda install python=2.7 
 	/opt/conda/bin/conda install -c anaconda pip
 
 	/opt/conda/bin/pip install numpy scipy matplotlib pysam Flask gdown
-    /opt/conda/bin/conda install -c mosek mosek
+    /opt/conda/bin/conda install -c mosek mosek=8
 
 	# mosek installation
 	wget http://download.mosek.com/stable/8.0.0.60/mosektoolslinux64x86.tar.bz2
@@ -59,4 +58,4 @@ export MOSEKLM_LICENSE_FILE=/mosek/8/licenses
 	python setup.py install #(--user)
 	cd -
 
-	git clone https://github.com/virajbdeshpande/AmpliconArchitect.git
+	git clone https://github.com/jluebeck/AmpliconArchitect.git
