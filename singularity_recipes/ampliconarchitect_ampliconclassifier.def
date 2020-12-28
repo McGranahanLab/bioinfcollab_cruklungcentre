@@ -5,6 +5,7 @@ From: continuumio/miniconda
 %help
 Main software:
 	AmpliconArchitect v.2 https://github.com/virajbdeshpande/AmpliconArchitect
+	AmpliconClassifier v.1 https://github.com/jluebeck/AmpliconClassifier.git
 
 	!!! ATTENTION !!!
 	Mosek lisence should be in the container! Please follow next steps to 
@@ -26,10 +27,10 @@ Main software:
 	exec /opt/conda/bin/python "$@"
 
 %environment
-export MOSEKPLATFORM=linux64x86
-export PATH=$PATH:/mosek/8/tools/platform/$MOSEKPLATFORM/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/mosek/8/tools/platform/$MOSEKPLATFORM/bin
-export MOSEKLM_LICENSE_FILE=/mosek/8/licenses
+	export MOSEKPLATFORM=linux64x86
+	export PATH=$PATH:/mosek/8/tools/platform/$MOSEKPLATFORM/bin
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/mosek/8/tools/platform/$MOSEKPLATFORM/bin
+	export MOSEKLM_LICENSE_FILE=/mosek/8/licenses
 
 %post
 	apt-get update && apt-get install -y procps libcurl4-openssl-dev \
@@ -38,7 +39,7 @@ export MOSEKLM_LICENSE_FILE=/mosek/8/licenses
 
 	/opt/conda/bin/conda install -c anaconda pip
 
-	/opt/conda/bin/pip install numpy scipy matplotlib pysam Flask gdown
+	/opt/conda/bin/pip install numpy scipy matplotlib pysam Flask gdown intervaltree
     /opt/conda/bin/conda install -c mosek mosek=8
 
 	# mosek installation
@@ -59,3 +60,4 @@ export MOSEKLM_LICENSE_FILE=/mosek/8/licenses
 	cd -
 
 	git clone https://github.com/jluebeck/AmpliconArchitect.git
+	git clone https://github.com/jluebeck/AmpliconClassifier.git
