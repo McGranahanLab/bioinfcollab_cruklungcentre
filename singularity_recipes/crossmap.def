@@ -1,0 +1,22 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+        Main software:
+        CrossMap        v.0.5.1          https://crossmap.readthedocs.io/en/latest/
+
+        Example run:
+        CrossMap.py
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%runscript
+        exec /opt/conda/bin/python "$@"
+
+%post
+        apt-get update && apt-get install -y procps libcurl4-openssl-dev \
+                                             libssl-dev gcc libz-dev
+        /opt/conda/bin/conda install python=3.6
+        /opt/conda/bin/pip3 install CrossMap 

@@ -1,0 +1,26 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+        Main software:
+        pyclone-vi        v.1.0.2          https://github.com/Roth-Lab/pyclone-vi/
+
+        Example run:
+        pyclone-vi --help
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%runscript
+        exec /opt/conda/bin/python "$@"
+
+%post
+        apt-get update && apt-get install -y git
+
+        /opt/conda/bin/conda install python=3.7
+
+        /opt/conda/bin/conda install --channel conda-forge --channel bioconda \
+                                     -y click h5py numba numpy pandas scipy
+
+        /opt/conda/bin/pip3 install git+https://github.com/Roth-Lab/pyclone-vi.git

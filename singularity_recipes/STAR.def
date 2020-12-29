@@ -1,0 +1,29 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        STAR        v.2.7.6a          https://github.com/alexdobin/STAR
+        singularity exec STAR <arguments>
+
+%labels
+        CREATOR		Maria Litovchenko
+	    ORGANIZATION	UCL
+
+%post
+		apt-get update && apt-get upgrade -y
+		apt-get install -y build-essential zlib1g-dev libbz2-dev unzip wget openjdk-8-jdk python
+
+		cd bin/
+
+		wget https://github.com/alexdobin/STAR/archive/2.7.6a.tar.gz
+		tar -xzf 2.7.6a.tar.gz
+		rm 2.7.6a.tar.gz
+		cd STAR-2.7.6a/source
+		make STAR
+
+%environment
+    	PATH=$PATH:/bin/STAR-2.7.6a/source/
+
+%runscript
+    exec "$@"		
