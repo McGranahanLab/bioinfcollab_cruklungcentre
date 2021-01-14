@@ -1,0 +1,57 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+
+%labels
+        CREATOR		Maria Litovchenko
+	    ORGANIZATION	UCL
+
+%post
+	export DEBIAN_FRONTEND=noninteractive
+	TZ=Europe/Moscow
+	ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+	apt-get update && apt-get upgrade -y
+	apt-get install -y build-essential zlib1g-dev libbz2-dev unzip wget \
+	                   openjdk-8-jdk python procps libcurl4-gnutls-dev\
+	                   libssl-dev gcc libz-dev git-all gfortran libxml2-dev \
+	                   libgit2-dev software-properties-common
+
+	# install R
+	apt-get remove -y r-base-core
+	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+	add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran40/'
+	add-apt-repository ppa:marutter/rdev
+	apt update -y
+	apt upgrade -y
+	apt-get install -y r-base
+
+	# intall IBM ILOG CPLEX, downloaded with academic licence and then uploaded
+	# to dropbox 
+	#wget https://www.dropbox.com/s/ebrtfcqsgi0a5uf/ILOG_COS_20.10_LINUX_X86_64.bin.zip
+	#unzip ILOG_COS_20.10_LINUX_X86_64.bin.zip
+	#chmod +x ILOG_COS_20.10_LINUX_X86_64.bin
+	#install ./ILOG_COS_20.10_LINUX_X86_64.bin bin/
+	#export CPLEX_DIR=/bin/CPLEX_Studio/:$PATH
+
+
+	wget https://bioconductor.org/packages/release/bioc/src/contrib/BiocGenerics_0.36.0.tar.gz
+	wget https://bioconductor.org/packages/release/bioc/src/contrib/S4Vectors_0.28.1.tar.gz
+	R -e 'install.packages("BiocGenerics_0.36.0.tar.gz", repos = NULL, type = "source")'
+	R -e 'install.packages("S4Vectors_0.28.1.tar.gz", repos = NULL, type = "source")'
+    R -e 'install.packages("BiocManager")'
+    R -e 'BiocManager::install(c("GenomicRanges"))'
+	R -e 'install.packages(c("gert", "xml2", "usethis", "roxygen2", "rversions", "shiny", "devtools"))'
+	R -e 'devtools::install_github("mskilab/gTrack")'
+	R -e 'devtools::install_github("mskilab/JaBbA")'
+
+%environment
+	PATH=$PATH:/bin/CPLEX_Studio/:$PATH
+
+    JABBA_PATH=$(Rscript -e 'cat(paste0(installed.packages()["JaBbA", "LibPath"], "/JaBbA/extdata/"))')
+    PATH=$PATH:${JABBA_PATH}:$PATH
+
+%test
+    jba ${JABBA_PATH}/junctions.vcf ${JABBA_PATH}/coverage.txt
+

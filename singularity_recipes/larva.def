@@ -1,0 +1,113 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%labels
+        CREATOR		Maria Litovchenko
+	    ORGANIZATION	UCL
+
+%post
+        export DEBIAN_FRONTEND=noninteractive
+		apt-get update -y && apt-get upgrade -y 
+		apt-get install -y build-essential unzip wget bedtools git-all \
+		                   libc6-dev procps libcurl4-openssl-dev \
+                           libssl-dev gcc libz-dev
+
+        wget https://launchpad.net/~ubuntu-security/+archive/ubuntu/ppa/+build/15108504/+files/libpng12-0_1.2.54-1ubuntu1.1_amd64.deb
+        dpkg -i libpng12-0_1.2.54-1ubuntu1.1_amd64.deb
+
+        cd bin/
+
+        # download LARVA
+		git clone https://github.com/gersteinlab/LARVA.git
+		cd LARVA
+
+		# LARVA can't be installed without annotations, such as replication 
+		# timing bigwig, so we will need them too. See %help how to produce.
+		mkdir annotations/
+		cd annotations
+		wget https://www.dropbox.com/s/30jltdo6kyz8vlw/replication_timing_hg38.bw
+		mv replication_timing_hg38.bw replication_timing.bw
+        # LARVA also requires genes.bed and pgened.bed. It was created by 
+        # create_genomic_regions.R script and uploaded to Dropbox.
+        wget https://www.dropbox.com/s/fdkrgciut468g8e/pgenes_hg38.bed
+        mv pgenes_hg38.bed pgenes.bed
+        wget https://www.dropbox.com/s/q77gy1q6js3o46u/genes_hg38.bed
+        mv genes_hg38.bed genes.bed
+        # LARVA also requires blacklisted regions, although in the main LARVA 
+		# command it's listed as optional argument
+		wget https://www.dropbox.com/s/x28p7qlpl5snbuy/blacklist_regions_hg38.bed
+		mv blacklist_regions_hg38.bed blacklist_regions.bed 
+
+		cd ../
+
+		sed -i 's@./bigWigAverageOverBed@/bin/LARVA/bigWigAverageOverBed@g' dependency-check.sh
+		sed -i 's@./bigWigAverageOverBed@/bin/LARVA/bigWigAverageOverBed@g' larva.cpp
+		sed -i 's@annotations/@/bin/LARVA/annotations/@g' dependency-check.sh
+		sed -i 's@annotations/@/bin/LARVA/annotations/@g' larva.cpp
+
+	   	make
+	   	chmod +x larva
+
+%environment
+    	PATH=$PATH:/bin/LARVA/
+    	PATH=$PATH:/bin/LARVA/bigWigAverageOverBed
+
+%runscript
+    exec "$@"
+
+
+%help
+		Main software:
+        LARVA 		 v2.0		https://github.com/gersteinlab/LARVA
+
+		#PLEASE READ AND EXECUTE THE SCRIPT BELOW BEFORE CREATING THE CONTAINER
+
+		# LARVA can't be installed without annotations, such as replication 
+		# timing bigwig, so we will need them too. However, they are on hg19. 
+		# Therefore, we need to move them to hg38. During container creation in
+		# the cloud the memory isn't sufficient to do transfer from hg19 to hg38
+		# This is why one needs to run the script below in advance and upload all
+		# needed files to dropbox to downloaf during container creation. 
+		mkdir annotations/
+		cd annotations/
+		wget http://larva.gersteinlab.org/data-context.zip
+		unzip data-context.zip
+		mv data-context/* .
+		rm -r data-context data-context.zip
+
+		# replication_timing.bw appears to be malformatted and crossmap doesn't 
+		# take it, this is why we do
+		# bigWigToBedGraph and bedGraphToBigWig
+		wget http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/bigWigToBedGraph
+		wget http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/bedGraphToBigWig
+		chmod +x bigWigToBedGraph
+		chmod +x bedGraphToBigWig
+		# chain file
+		wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg38.over.chain.gz
+		# we will need chromosome sizes too
+		wget https://raw.githubusercontent.com/igvteam/igv/master/genomes/sizes/hg19.chrom.sizes
+
+		# move annotations to hg38
+		mv replication_timing.bw replication_timing_hg19.bw
+		./bigWigToBedGraph replication_timing_hg19.bw replication_timing_hg19.bed
+		sort -k1,1 -k2,2n replication_timing_hg19.bed  > replication_timing_hg19_srt.bed
+		./bedGraphToBigWig replication_timing_hg19_srt.bed hg19.chrom.sizes \
+		                   replication_timing_hg19_srt.repaired.bw
+		singularity pull library://marialitovchenko/default/crossmap:v.0.5.1
+		singularity exec crossmap_v.0.5.1.sif CrossMap.py bigwig  hg19ToHg38.over.chain.gz \
+		                 replication_timing_hg19_srt.repaired.bw replication_timing_hg38
+		mv replication_timing_hg38.bw replication_timing.bw
+		# put replication_timing.bw in dropbox and create downloadable link
+
+		# LARVA also requires blacklisted regions, although in the main LARVA 
+		# command it's listed as optional argument
+		wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeMapability/wgEncodeDacMapabilityConsensusExcludable.bed.gz
+	   	gunzip wgEncodeDacMapabilityConsensusExcludable.bed.gz
+        mv wgEncodeDacMapabilityConsensusExcludable.bed blacklist_regions_hg19.bed
+        # the DAC file is on hg19, need to move it to hg38
+        CrossMap.py bed hg19ToHg38.over.chain.gz blacklist_regions_hg19.bed blacklist_regions_hg38.bed
+        mv blacklist_regions_hg38.bed blacklist_regions.bed
+
+        # run container with 
+        singularity exec larva.sif /bin/LARVA/larva
+	   

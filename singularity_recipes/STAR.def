@@ -3,7 +3,7 @@ From: ubuntu:18.04
 
 %help
         Main software:
-        STAR        v.2.7.6a          https://github.com/alexdobin/STAR
+        STAR        v.2.7.1a          https://github.com/alexdobin/STAR
         singularity exec STAR <arguments>
 
 %labels
@@ -16,14 +16,14 @@ From: ubuntu:18.04
 
 		cd bin/
 
-		wget https://github.com/alexdobin/STAR/archive/2.7.6a.tar.gz
-		tar -xzf 2.7.6a.tar.gz
-		rm 2.7.6a.tar.gz
-		cd STAR-2.7.6a/source
+		wget https://github.com/alexdobin/STAR/archive/2.7.1a.zip
+		unzip 2.7.1a.zip
+		rm 2.7.1a.zip
+		cd STAR-2.7.1a/source
 		make STAR
 
 %environment
-    	PATH=$PATH:/bin/STAR-2.7.6a/source/
+    	PATH=$PATH:/bin/STAR-2.7.1a/source/
 
 %runscript
     exec "$@"		
