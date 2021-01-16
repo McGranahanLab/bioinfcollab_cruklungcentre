@@ -1,11 +1,19 @@
 Bootstrap: docker
-From: continuumio/miniconda
+From: ubuntu:18.04
 
 
 %help
 Main software:
-	AmpliconArchitect v.2 https://github.com/virajbdeshpande/AmpliconArchitect
+	PrepareAA		   v.1 https://github.com/jluebeck/PrepareAA
+	AmpliconArchitect  v.2 https://github.com/virajbdeshpande/AmpliconArchitect
 	AmpliconClassifier v.1 https://github.com/jluebeck/AmpliconClassifier.git
+
+	Supported by:
+	samtools v1.10
+	bwa v0.7.17
+	numpy==1.16.6 scipy==1.2.4 matplotlib==2.2.5 pysam==0.16.0.1 
+	Flask==1.1.2 gdown==3.12.2 intervaltree==3.1.0 biopython==1.76
+	cnvkit==0.9.6
 
 	!!! ATTENTION !!!
 	Mosek lisence should be in the container! Please follow next steps to 
@@ -18,30 +26,89 @@ Main software:
 	5. Remove ?dl=0 at the end of the link
 	6. Replace with your link everything wget on line 53
 
+	Beware that cnvkit is of VERY OLD verion, the last one which can handle 
+	python 2.7
+
+	Example run:
+	singularity exec ampliconarchitect_classifier_v16jan2021.sif /AmpliconArchitect/src/AmpliconArchitect.py --help
+	singularity exec ampliconarchitect_classifier_v16jan2021.sif /AmpliconClassifier/amplicon_classifier.py —help
+	singularity exec ampliconarchitect_classifier_v16jan2021.sif /PrepareAA/PrepareAA.py -h
+
 %labels
 	CREATOR Maria Litovchenko
 	ORGANIZATION UCL
 
 
 %runscript
-	exec /opt/conda/bin/python "$@"
+	exec python "$@"
 
 %environment
 	export MOSEKPLATFORM=linux64x86
 	export PATH=$PATH:/mosek/8/tools/platform/$MOSEKPLATFORM/bin
 	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/mosek/8/tools/platform/$MOSEKPLATFORM/bin
 	export MOSEKLM_LICENSE_FILE=/mosek/8/licenses
+	export PATH=$PATH:/bin/samtools-1.10/
+    export PATH=$PATH:/bin/bwa-0.7.17/
+    export PATH="$SINGULARITY_ROOT/opt/miniconda/bin:$PATH"
 
 %post
-	apt-get update && apt-get install -y procps libcurl4-openssl-dev \
-		libssl-dev gcc libz-dev zlib1g-dev git-all wget \
-		build-essential gfortran samtools python-dev
+	export DEBIAN_FRONTEND=noninteractive
+	apt-get update -y
+	apt-get upgrade -y
+	apt-get install -y build-essential software-properties-common gcc unzip \
+					   wget make tabix default-jre default-jdk git-all procps \
+					   gfortran python-dev libz-dev zlib1g-dev libssl-dev \
+					   libbz2-dev liblzma-dev libxml2-dev libgit2-dev \
+					   libncurses5-dev 
 
-	/opt/conda/bin/conda install -c anaconda pip
+	# samtools 
+	cd bin
+    wget https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2
+    tar -xf samtools-1.10.tar.bz2
+    cd samtools-1.10
+    ./configure
+    make
+    make install
+    cd ../
+    rm samtools-1.10.tar.bz2
+    export PATH=$PATH:/bin/samtools-1.10/
 
-	/opt/conda/bin/pip install numpy scipy matplotlib pysam Flask gdown intervaltree
-    /opt/conda/bin/conda install -c mosek mosek=8
+    # picard
+    wget https://github.com/broadinstitute/picard/releases/download/2.23.3/picard.jar
 
+    # BWA
+    wget https://github.com/lh3/bwa/releases/download/v0.7.17/bwa-0.7.17.tar.bz2
+    tar -xf bwa-0.7.17.tar.bz2
+    rm bwa-0.7.17.tar.bz2
+    cd bwa-0.7.17
+    make
+    cd ../
+    export PATH=$PATH:/bin/bwa-0.7.17/
+
+    # install R 4.0
+	apt-get remove -y r-base-core
+	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+	add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran40/'
+	add-apt-repository ppa:marutter/rdev
+	apt update -y
+	apt upgrade -y
+	apt-get install -y r-base
+
+	# conda
+	wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O $HOME/miniconda.sh
+  	bash $HOME/miniconda.sh -b -p $SINGULARITY_ROOT/opt/miniconda
+  	export PATH="$SINGULARITY_ROOT/opt/miniconda/bin:$PATH"
+  	rm $HOME/miniconda.sh
+
+  	# CNVkit and other dependencies with python 2.7. Beware: 0.9.6 is the last 
+  	# version of cnvkit which supports python 2.7
+	pip install numpy==1.16.6 scipy==1.2.3 matplotlib==2.2.5 pysam==0.16.0.1 \
+	            Flask==1.1.2 gdown==3.12.2 intervaltree==3.1.0
+	pip install biopython==1.76
+	pip install cnvkit==0.9.6
+
+	# MOSEK and it's licence
+  	conda install -c mosek mosek=8
 	# mosek installation
 	wget http://download.mosek.com/stable/8.0.0.60/mosektoolslinux64x86.tar.bz2
 	tar xf mosektoolslinux64x86.tar.bz2
@@ -57,7 +124,10 @@ Main software:
 	echo export MOSEKLM_LICENSE_FILE=$PWD/mosek/8/licenses >> ~/.bashrc
 	cd $PWD/mosek/8/tools/platform/linux64x86/python/2/
 	python setup.py install #(--user)
-	cd -
+	cd - # in bin
+	cd ../ # in root
 
+	git clone https://github.com/jluebeck/PrepareAA.git
 	git clone https://github.com/jluebeck/AmpliconArchitect.git
 	git clone https://github.com/jluebeck/AmpliconClassifier.git
+    
