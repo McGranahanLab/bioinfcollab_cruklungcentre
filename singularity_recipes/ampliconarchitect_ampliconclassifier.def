@@ -1,6 +1,5 @@
 Bootstrap: docker
-From: ubuntu:18.04
-
+From: continuumio/miniconda
 
 %help
 Main software:
@@ -30,14 +29,13 @@ Main software:
 	python 2.7
 
 	Example run:
-	singularity exec ampliconarchitect_classifier_v16jan2021.sif /AmpliconArchitect/src/AmpliconArchitect.py --help
-	singularity exec ampliconarchitect_classifier_v16jan2021.sif /AmpliconClassifier/amplicon_classifier.py —help
-	singularity exec ampliconarchitect_classifier_v16jan2021.sif /PrepareAA/PrepareAA.py -h
+	singularity exec ampliconarchitect_ampliconclassifier_v17jan2021.sif /AmpliconArchitect/src/AmpliconArchitect.py --help
+	singularity exec ampliconarchitect_ampliconclassifier_v17jan2021.sif /AmpliconClassifier/amplicon_classifier.py —help
+	singularity exec ampliconarchitect_ampliconclassifier_v17jan2021.sif /PrepareAA/PrepareAA.py -h
 
 %labels
 	CREATOR Maria Litovchenko
 	ORGANIZATION UCL
-
 
 %runscript
 	exec python "$@"
@@ -49,17 +47,32 @@ Main software:
 	export MOSEKLM_LICENSE_FILE=/mosek/8/licenses
 	export PATH=$PATH:/bin/samtools-1.10/
     export PATH=$PATH:/bin/bwa-0.7.17/
-    export PATH="$SINGULARITY_ROOT/opt/miniconda/bin:$PATH"
+    export PATH=$PATH:/opt/conda/bin/
 
 %post
 	export DEBIAN_FRONTEND=noninteractive
 	apt-get update -y
 	apt-get upgrade -y
 	apt-get install -y build-essential software-properties-common gcc unzip \
-					   wget make tabix default-jre default-jdk git-all procps \
-					   gfortran python-dev libz-dev zlib1g-dev libssl-dev \
+					   wget make tabix git-all procps \
+					   gfortran libz-dev zlib1g-dev libssl-dev \
 					   libbz2-dev liblzma-dev libxml2-dev libgit2-dev \
 					   libncurses5-dev 
+	apt-get install -y python-dev python-pip
+
+	# install pip and java-jdk/jre
+	/opt/conda/bin/conda install -c anaconda pip
+	/opt/conda/bin/conda install -c cyclus java-jre
+	/opt/conda/bin/conda install -c bioconda java-jdk
+	/opt/conda/bin/conda install -c conda-forge r-base
+
+  	# CNVkit and other dependencies with python 2.7. Beware: 0.9.6 is the last 
+  	# version of cnvkit which supports python 2.7
+  	PIP_TARGET_DIR=/opt/conda/lib/python2.7/site-packages/
+	/opt/conda/bin/pip install numpy==1.16.6 scipy==1.2.3 matplotlib==2.2.5 \
+	                           pysam==0.16.0.1  Flask==1.1.2 gdown==3.12.2 \
+	                           intervaltree==3.1.0 biopython==1.76\
+	                           cnvkit==0.9.6 --target $PIP_TARGET_DIR
 
 	# samtools 
 	cd bin
@@ -85,30 +98,8 @@ Main software:
     cd ../
     export PATH=$PATH:/bin/bwa-0.7.17/
 
-    # install R 4.0
-	apt-get remove -y r-base-core
-	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
-	add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran40/'
-	add-apt-repository ppa:marutter/rdev
-	apt update -y
-	apt upgrade -y
-	apt-get install -y r-base
-
-	# conda
-	wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O $HOME/miniconda.sh
-  	bash $HOME/miniconda.sh -b -p $SINGULARITY_ROOT/opt/miniconda
-  	export PATH="$SINGULARITY_ROOT/opt/miniconda/bin:$PATH"
-  	rm $HOME/miniconda.sh
-
-  	# CNVkit and other dependencies with python 2.7. Beware: 0.9.6 is the last 
-  	# version of cnvkit which supports python 2.7
-	pip install numpy==1.16.6 scipy==1.2.3 matplotlib==2.2.5 pysam==0.16.0.1 \
-	            Flask==1.1.2 gdown==3.12.2 intervaltree==3.1.0
-	pip install biopython==1.76
-	pip install cnvkit==0.9.6
-
 	# MOSEK and it's licence
-  	conda install -c mosek mosek=8
+  	/opt/conda/bin/conda install -c mosek mosek=8
 	# mosek installation
 	wget http://download.mosek.com/stable/8.0.0.60/mosektoolslinux64x86.tar.bz2
 	tar xf mosektoolslinux64x86.tar.bz2
@@ -130,4 +121,5 @@ Main software:
 	git clone https://github.com/jluebeck/PrepareAA.git
 	git clone https://github.com/jluebeck/AmpliconArchitect.git
 	git clone https://github.com/jluebeck/AmpliconClassifier.git
-    
+	# to switch to python2
+	sed -i 's/python3/python2/' /AmpliconClassifier/amplicon_classifier.py /AmpliconClassifier/amplicon_similarity.py /AmpliconClassifier/get_genes.py
