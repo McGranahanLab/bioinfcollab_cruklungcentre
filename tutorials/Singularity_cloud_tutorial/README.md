@@ -12,7 +12,7 @@ Go to [https://cloud.sylabs.io/library](https://cloud.sylabs.io/library) and pre
 ### Step 3
 In the fields "Container name" and "Description" put some dummy names. They are dummy because singularity cloud _always gives an error first time you fill them in_.
 
-!["Step 1"](https://github.com/McGranahanLab/bioinfcollab_cruklungcentre/tree/master/tutorials/Singularity_cloud_tutorial/img/1.png)
+!["Step 1"](https://raw.githubusercontent.com/McGranahanLab/bioinfcollab_cruklungcentre/master/tutorials/Singularity_cloud_tutorial/img/)
 The error will look like this:
 
 !["Step 2"](https://github.com/McGranahanLab/bioinfcollab_cruklungcentre/tree/master/tutorials/Singularity_cloud_tutorial/img/2.png)
