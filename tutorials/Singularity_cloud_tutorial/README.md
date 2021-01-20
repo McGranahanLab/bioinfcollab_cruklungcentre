@@ -12,42 +12,42 @@ Go to [https://cloud.sylabs.io/library](https://cloud.sylabs.io/library) and pre
 ### Step 3
 In the fields "Container name" and "Description" put some dummy names. They are dummy because singularity cloud _always gives an error first time you fill them in_.
 
-!["Step 1"](https://github.com/McGranahanLab/Wiki/blob/master/Singularity_cloud_tutorial/img/1.png)
+!["Step 1"](https://github.com/McGranahanLab/bioinfcollab_cruklungcentre/tree/master/tutorials/Singularity_cloud_tutorial/img/1.png)
 The error will look like this:
 
-!["Step 2"](https://github.com/McGranahanLab/Wiki/blob/master/Singularity_cloud_tutorial/img/2.png)
+!["Step 2"](https://github.com/McGranahanLab/bioinfcollab_cruklungcentre/tree/master/tutorials/Singularity_cloud_tutorial/img/2.png)
 Now, after it gave you that error, you can put real values in fields "Container name" and "Description" :
 
-!["Step 3"](https://github.com/McGranahanLab/Wiki/blob/master/Singularity_cloud_tutorial/img/3.png)
+!["Step 3"](https://github.com/McGranahanLab/bioinfcollab_cruklungcentre/tree/master/tutorials/Singularity_cloud_tutorial/img/3.png)
 
 Press "Next"
 
 ### Step 4
 Press on tab "Remote builder":
 
-!["Step 4"](https://github.com/McGranahanLab/Wiki/blob/master/Singularity_cloud_tutorial/img/4.png)
+!["Step 4"](https://github.com/McGranahanLab/bioinfcollab_cruklungcentre/tree/master/tutorials/Singularity_cloud_tutorial/img/4.png)
 
 In the text field, paste your recipe. This tutorial doesn't cover how to write a recipe, but there will be one! Also, this [link](https://singularity.lbl.gov/docs-recipes) provides a good overview of recipe structure. In addition, have a look at the [library of tested singularity recipies](https://github.com/McGranahanLab/bioinfcollab_cruklungcentre/tree/master/singularity_recipes).
 
-!["Step 5"](https://github.com/McGranahanLab/Wiki/blob/master/Singularity_cloud_tutorial/img/5.png)
+!["Step 5"](https://github.com/McGranahanLab/bioinfcollab_cruklungcentre/tree/master/tutorials/Singularity_cloud_tutorial/img/5.png)
 
 Fill in image tag and description and press "Build"
 
-!["Step 6"](https://github.com/McGranahanLab/Wiki/blob/master/Singularity_cloud_tutorial/img/6.png)
+!["Step 6"](https://github.com/McGranahanLab/bioinfcollab_cruklungcentre/tree/master/tutorials/Singularity_cloud_tutorial/img/6.png)
 
 Bulding will take some time. You can monitor the progress.
 
 ### Step 5
 However, singularity _will never show you that the build was successfull, even if it was_. It's a bug. So, you need to look for "Creating SIF file...". If it's there, the build was successful. 
 
-!["Step 7"](https://github.com/McGranahanLab/Wiki/blob/master/Singularity_cloud_tutorial/img/7.png)
+!["Step 7"](https://github.com/McGranahanLab/bioinfcollab_cruklungcentre/tree/master/tutorials/Singularity_cloud_tutorial/img/7.png)
 Container is build!
 
 ### Step 6: getting container to your environment
 #### Working with container on UCL server
 Since singularity is installed on UCL server, you can simply press on "Show PULL CMD" button on the page of the created container, copy and paster the command in the terminal on UCL cluster, avoiding "--arc amd64", i.e `singularity pull --arch amd64 library://marialitovchenko/default/pyclone-vi:v1.0`. That's it!
 
-!["Step 8"](https://github.com/McGranahanLab/Wiki/blob/master/Singularity_cloud_tutorial/img/8.png)
+!["Step 8"](https://github.com/McGranahanLab/bioinfcollab_cruklungcentre/tree/master/tutorials/Singularity_cloud_tutorial/img/8.png)
 To run the container: `singularity exec <your_container.sif> <your_command>`
 
 #### Working with container on GEL
