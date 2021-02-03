@@ -2,7 +2,7 @@
 
 | Software                                                                                                          | Version         | Notes |
 | ----------------------------------------------------------------------------------------------------------------- |:---------------:| ----- |
-[AmpliconArchitect](https://github.com/virajbdeshpande/AmpliconArchitect)                                           | v2              | | 
+[AmpliconArchitect](https://github.com/virajbdeshpande/AmpliconArchitect)                                           | v2              | |
 [AmpliconClassifier](https://github.com/jluebeck/AmpliconClassifier) 												| v1			  | See recipe ampliconarchitect_ampliconclassifier|
 [bcftools](http://www.htslib.org/)                                                                                  | v.1.10.2        | |
 [bedtools](https://github.com/arq5x/bedtools2/)                                                                     | v2.29.2         | |
@@ -30,3 +30,4 @@
 [sratoolkit](https://github.com/ncbi/sra-tools/)                                                                    | v2.10.8         | |
 [STAR](https://github.com/alexdobin/STAR)																			| vv.2.7.1a 	  | |
 [STRELKA](https://github.com/Illumina/strelka)              														| v2.9.10 		  |	See recipe polysolver_hg38 |
+[DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)              														| v1.30.0 		  |	R package (R v.4.0.3) |
