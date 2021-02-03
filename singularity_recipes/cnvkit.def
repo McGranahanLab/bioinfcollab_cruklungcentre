@@ -1,0 +1,47 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+        Main software:
+        cnvkit      0.9.8          https://cnvkit.readthedocs.io/en/stable/quickstart.html
+
+        Example run:
+        cnvkit.py --help
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%runscript
+        exec /opt/conda/bin/python "$@"
+
+%post
+        apt-get update && apt-get install -y git wget gnupg2
+        apt-get install -y libopenblas-dev r-base-core libcurl4-openssl-dev \
+                           libopenmpi-dev openmpi-bin openmpi-common \
+                           openmpi-doc openssh-client openssh-server \
+                           libssh-dev nano cmake  gfortran g++ curl \
+                           autoconf bzip2 libtool libtool-bin 
+
+
+        /opt/conda/bin/conda install python=3.7
+        /opt/conda/bin/conda config --add channels defaults
+        /opt/conda/bin/conda config --add channels bioconda
+        /opt/conda/bin/conda config --add channels conda-forge
+
+        /opt/conda/bin/conda install biopython=1.78 reportlab=3.5.59 \
+                                     matplotlib=3.3.4 numpy=1.20.0 \
+                                     scipy=1.6.0 pandas=1.2.1 \
+                                     pyfaidx=0.5.9.2 pysam=0.16.0.1
+
+        wget https://bioconductor.org/packages/release/bioc/src/contrib/BiocGenerics_0.36.0.tar.gz
+        wget https://bioconductor.org/packages/release/bioc/src/contrib/S4Vectors_0.28.1.tar.gz
+        R -e 'install.packages("BiocGenerics_0.36.0.tar.gz", repos = NULL, type = "source")'
+        R -e 'install.packages("S4Vectors_0.28.1.tar.gz", repos = NULL, type = "source")'
+        R -e 'install.packages("BiocManager")'
+        R -e 'BiocManager::install(c("GenomicRanges"))'
+        R -e 'BiocManager::install(c("DNAcopy"))'
+
+
+        /opt/conda/bin/conda install cnvkit==0.9.8
+
