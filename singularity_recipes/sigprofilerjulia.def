@@ -1,0 +1,41 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        sigprofilerjulia v03_03_2021 https://github.com/oriolpich/sigprofilerjulia
+
+        Run with:
+        singularity exec sigprofilerjulia.sif julia /bin/sigprofilerjulia/SigProfilerJulia.jl
+
+        Important note:
+        Although the script below compiles just fine, somehow packages in julia
+        are still not accessible. To properly install them do following:
+        singularity shell <this_image.sif>
+        cd /bin/sigprofilerjulia
+        julia julia_dependencies.jl
+        exit
+        Then they will work!
+
+%labels
+        CREATOR Maria Litovchenko
+
+%post
+        apt-get -qq -y update
+        apt-get -qq -y install build-essential libatomic1 python gfortran \
+                               perl wget m4 cmake pkg-config curl git
+        
+        cd bin/
+
+        wget https://julialang-s3.julialang.org/bin/linux/x64/1.5/julia-1.5.2-linux-x86_64.tar.gz
+        tar -xvzf julia-1.5.2-linux-x86_64.tar.gz
+        rm julia-1.5.2-linux-x86_64.tar.gz
+        
+        cp -r julia-1.5.2 /opt/
+        ln -s /opt/julia-1.5.2/bin/julia /usr/local/bin/julia
+
+        git clone https://github.com/oriolpich/sigprofilerjulia.git
+        julia sigprofilerjulia/julia_dependencies.jl
+
+%environment
+        export PATH=$PATH:/bin/sigprofilerjulia/
