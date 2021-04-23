@@ -1,0 +1,66 @@
+Bootstrap: docker
+From: ubuntu:14.04
+
+%help
+        Main software:
+        platypus	v0.8.1	https://www.rdm.ox.ac.uk/research/lunter-group/lunter-group/platypus-a-haplotype-based-variant-caller-for-next-generation-sequence-data
+
+        Example run:
+        singularity exec platypus.sif python /bin/Platypus_0.8.1/Platypus.py
+
+        Supported by:
+        GATK v4
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%post
+        export DEBIAN_FRONTEND=noninteractive
+        TZ='Europe/Moscow'
+        export TZ
+
+        apt-get -y update
+        apt-get -y upgrade
+        apt-get install -y software-properties-common build-essential \
+        				   curl zlib1g-dev libbz2-dev unzip wget \
+                           python python-dev procps libcurl4-gnutls-dev \
+                           libssl-dev libz-dev git-all gfortran libxml2-dev \
+                           libgit2-dev libssl-dev libncurses5-dev liblzma-dev \
+                           bzip2 gcc g++ make \
+                           tabix libparallel-forkmanager-perl \
+                           libbio-samtools-perl default-jdk 
+        apt-get -y update
+        apt-get -y upgrade
+
+        # install htslib
+        cd bin
+        wget https://github.com/samtools/htslib/releases/download/1.12/htslib-1.12.tar.bz2
+        tar xjf htslib-1.12.tar.bz2 
+        cd htslib-1.12/
+        ./configure 
+        make
+        make install
+        export LD_LIBRARY_PATH=/bin/htslib-1.12/
+        cd ../
+        rm htslib-1.12.tar.bz2
+
+        # install platypus
+        wget https://www.rdm.ox.ac.uk/files/research/lunter-group/platypus-latest.tgz
+        tar -xvzf platypus-latest.tgz
+        cd Platypus_0.8.1
+        ./buildPlatypus.sh
+        cd ../
+        rm platypus-latest.tgz
+
+        # GATK
+        wget https://github.com/broadinstitute/gatk/releases/download/4.1.8.1/gatk-4.1.8.1.zip
+        unzip gatk-4.1.8.1.zip
+        rm gatk-4.1.8.1.zip
+
+%environment
+        export PATH=$PATH:/bin/htslib-1.12/:$PATH
+        export LD_LIBRARY_PATH=/bin/htslib-1.12/
+        export LC_ALL=C.UTF-8
+        export LANG=C.UTF-8
+        export PATH=$PATH:/bin/gatk-4.1.8.1/:$PATH
