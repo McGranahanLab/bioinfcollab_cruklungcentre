@@ -1,0 +1,48 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+        Main software:
+        sequenza-utils  v 3.0.0 https://sequenza-utils.readthedocs.io/en/latest/
+        
+        Supported by:
+        samtools, tabix, python 3.6
+
+        Example run:
+        sequenza-utils --help
+
+%labels
+    CREATOR     Maria Litovchenko
+    ORGANIZATION    UCL
+
+%post
+    apt-get -y update 
+    apt-get install -y git wget gnupg2
+    apt-get install -y software-properties-common libopenblas-dev libcurl4-openssl-dev \
+                       libopenmpi-dev openmpi-bin openmpi-common \
+                       openmpi-doc openssh-client openssh-server \
+                       libssh-dev nano cmake  gfortran g++ curl \
+                       autoconf bzip2 libtool libtool-bin tabix \
+                       libncurses5-dev liblzma-dev libbz2-dev
+    apt-get -y update 
+
+    # install python 3.6
+    /opt/conda/bin/conda install python=3.6
+
+    # samtools 
+    cd bin
+    wget https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2
+    tar -xf samtools-1.10.tar.bz2
+    cd samtools-1.10
+    ./configure
+    make
+    make install
+    cd ../
+    rm samtools-1.10.tar.bz2
+    export PATH=$PATH:/bin/samtools-1.10/
+
+    # sequenza-utils 
+    /opt/conda/bin/conda install -c bioconda sequenza-utils=3.0.0
+    
+%environment
+    export PATH=$PATH:/bin/samtools-1.10/bin:$PATH
