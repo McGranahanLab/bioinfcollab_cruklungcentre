@@ -52,8 +52,8 @@ From: continuumio/miniconda3
         export PATH=$PATH:/bin/alleleCount/bin:$PATH  
         cd ../
 
-        # install python 3.7
-        /opt/conda/bin/conda install python=3.7
+        # install python 3.9
+        /opt/conda/bin/conda install python=3.9
 
         # install SigProfilerMatrixGenerator
         /opt/conda/bin/pip3 install SigProfilerMatrixGenerator
