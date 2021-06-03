@@ -45,9 +45,10 @@ From: ubuntu:18.04
     R -e "install.packages(c('nnls', 'Hmisc', 'mgcv', 'plyr'), repos='http://cran.rstudio.com/')"
     R -e "install.packages(c('sqldf', 'matrixStats'), repos='http://cran.rstudio.com/')"
     R -e "install.packages('caret', repos='http://cran.rstudio.com/')"
+    R -e "install.packages(c('factoextra', 'FactoMineR', 'tidyverse', 'readxl', 'seqinr'), repos='http://cran.rstudio.com/')"
     R -e "install.packages(c('BiocManager'))"
-    R -e "BiocManager::install(c('Biostrings','rtracklayer', 'GenomeInfoDb', 'IRanges', 'BSgenome', 'GenomicAlignments', 'BiocParallel'), ask=F, update=F)"
-    R -e "library(devtools); install_github('yuchaojiang/CODEX/package')"
+    R -e "BiocManager::install(c('Biostrings','rtracklayer', 'GenomeInfoDb', 'IRanges', 'BSgenome', 'GenomicAlignments', 'BiocParallel', 'BSgenome.Hsapiens.UCSC.hg38', 'BSgenome.Hsapiens.UCSC.hg19'), ask=F, update=F)"
+    R -e "library(devtools); install_github('yuchaojiang/CODEX/package'); install_github('yuchaojiang/CODEX2/package')"
 
     # Download and install CN_Learn from Github
     mkdir -p /opt/tools
@@ -112,6 +113,12 @@ From: ubuntu:18.04
     rm gatk-3.5.tar.gz  && rm xhmm.tar.gz  && rm clamms.tar.gz
     rm Python-3.7.3.tgz && rm 1.3.2.tar.gz && rm 1.3.1.tar.gz 
     rm bedtools-2.27.1.tar.gz # && rm plinkseq-x86_64-latest.zip
+
+    cd /opt/tools/
+    wget https://github.com/Genotek/ClassifyCNV/archive/refs/tags/v1.1.1.zip
+    mv v1.1.1.zip ClassifyCNV.zip
+    unzip ClassifyCNV.zip
+    rm ClassifyCNV.zip
 
 %environment
     CLAMMS_DIR=/opt/tools/CN_Learn/software/clamms/
