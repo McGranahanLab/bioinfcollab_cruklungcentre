@@ -21,7 +21,7 @@ From: ubuntu:18.04
                        libcurl4-openssl-dev libatlas-base-dev \
                        libmariadbclient-dev libffi-dev libxml2-dev \
                        libncurses5-dev libsm6 libxrender1 libfontconfig1 \
-                       libxt6 libtcl8.6 libtk8.6 python3-pip 
+                       libxt6 libtcl8.6 libtk8.6
 
     add-apt-repository ppa:webupd8team/java -y 
     apt-get update 
@@ -32,6 +32,16 @@ From: ubuntu:18.04
     && apt-get install -y --allow-unauthenticated oracle-java8-installer oracle-java8-set-default
     apt-get autoremove -y 
     apt-get clean -y
+
+    # Install python
+    add-apt-repository ppa:deadsnakes/ppa -y
+    apt-get update -y 
+    apt install -y python3.7 python3-pip 
+    python3.7 -m pip install Cython
+    python3.7 -m pip install --upgrade setuptools
+    python3.7 -m pip install numpy==1.16.1 pandas==0.24.2 \
+                             scipy==1.2.1 scikit-learn==0.20.3 pydot==1.4.1
+
 
     # Install R
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
@@ -56,22 +66,8 @@ From: ubuntu:18.04
     git clone --recursive https://github.com/girirajanlab/CN_Learn.git
     cd -
 
-    # Install python
-    mkdir -p /opt/tools/CN_Learn/software
-    cd /opt/tools/CN_Learn/software
-    wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz
-    tar xzf Python-3.7.3.tgz
-    cd Python-3.7.3
-    ./configure && make && make install
-    # Install all the required python packages using PIP3
-    pip3 install -U 'numpy==1.16.1' 
-    pip3 install -U 'Cython==0.27.3' 
-    pip3 install -U 'pandas==0.24.2' 
-    pip3 install -U 'scipy==1.2.1' 
-    pip3 install -U 'scikit-learn==0.20.3'
-    pip3 install -U 'pydot==1.4.1'
-
     # Install the tools required to run individual CNV callers
+    mkdir -p /opt/tools/CN_Learn/software
     cd /opt/tools/CN_Learn/software
     tar -zxvf gatk-3.5.tar.gz
     tar -zxvf xhmm.tar.gz
