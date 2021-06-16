@@ -1,0 +1,41 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        SnpEff 5.0e       v5.0e          http://pcingola.github.io/SnpEff/
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    TZ='Europe/Moscow'
+    export TZ
+
+    apt-get update 
+    apt-get upgrade -y 
+    apt-get install -y autoconf gcc git make ssh wget vim build-essential \
+                       software-properties-common ca-certificates libssl-dev \
+                       libcurl4-openssl-dev libatlas-base-dev \
+                       libmariadbclient-dev libffi-dev libxml2-dev \
+                       libncurses5-dev libsm6 libxrender1 libfontconfig1 \
+                       libxt6 libtcl8.6 libtk8.6 zip unzip
+    # install java
+    add-apt-repository ppa:webupd8team/java -y 
+    apt-get update 
+    echo "deb https://debian.opennms.org/ stable main" >> /etc/apt/sources.list
+    apt-key adv --fetch-keys http://debian.opennms.org/OPENNMS-GPG-KEY 
+    apt-get update
+    echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections \
+    && apt-get install -y --allow-unauthenticated oracle-java8-installer oracle-java8-set-default
+    apt-get autoremove -y 
+    apt-get clean -y
+
+    cd bin/
+    wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip
+    unzip snpEff_latest_core.zip
+    rm -r snpEff_latest_core.zip
+    cd snpEff/
+    java -jar snpEff.jar download GRCm38.99
