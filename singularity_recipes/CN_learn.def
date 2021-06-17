@@ -21,7 +21,7 @@ From: ubuntu:18.04
                        libcurl4-openssl-dev libatlas-base-dev \
                        libmariadbclient-dev libffi-dev libxml2-dev \
                        libncurses5-dev libsm6 libxrender1 libfontconfig1 \
-                       libxt6 libtcl8.6 libtk8.6
+                       libxt6 libtcl8.6 libtk8.6 libgfortran3
 
     add-apt-repository ppa:webupd8team/java -y 
     apt-get update 
