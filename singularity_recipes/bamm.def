@@ -1,0 +1,33 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        BAMM       v2.5.0         http://bamm-project.org/
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    TZ='Europe/Moscow'
+    export TZ
+
+    apt-get upgrade -y 
+    apt-get update -y
+    apt-get install -y autoconf gcc git make cmake ssh wget vim build-essential \
+                       software-properties-common ca-certificates libssl-dev \
+                       libcurl4-openssl-dev libatlas-base-dev \
+                       libmariadbclient-dev libffi-dev libxml2-dev \
+                       libncurses5-dev libsm6 libxrender1 libfontconfig1 \
+                       libxt6 libtcl8.6 libtk8.6 libgfortran3
+
+    cd bin/
+    git clone https://github.com/macroevolution/bamm.git
+    cd bamm
+    mkdir build
+    cd build
+    cmake ..
+    make -j
+    make install
