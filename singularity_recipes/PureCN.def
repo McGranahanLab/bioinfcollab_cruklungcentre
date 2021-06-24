@@ -1,0 +1,46 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        PureCN       v.1.22.1          https://bioconductor.org/packages/release/bioc/html/PureCN.html
+
+        ATTENTION! A SLIGHT MODIFICATION WAS MADE TO runAbsoluteCN SCRIPT! 
+        check.DB = F WAS SET TO FALSE IN FUNCTION .readAndCheckVcf
+
+        PureCN location: /usr/local/lib/R/site-library/PureCN/extdata
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    TZ='Europe/Moscow'
+    export TZ
+
+    apt-get upgrade -y 
+    apt-get update -y
+    apt-get install -y autoconf gcc git make ssh wget vim build-essential \
+                       software-properties-common ca-certificates libssl-dev \
+                       libcurl4-openssl-dev libatlas-base-dev \
+                       libmariadbclient-dev libffi-dev libxml2-dev \
+                       libncurses5-dev libsm6 libxrender1 libfontconfig1 \
+                       libxt6 libtcl8.6 libtk8.6 libgfortran3
+
+    # Install R
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+    add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran40/'
+    apt-get -qq -y dist-upgrade
+    apt-get -qq -y install r-base r-base-core r-recommended
+
+    # Install all the required R packages
+    R -e "install.packages(c('R.utils', 'optparse', 'futile.logger', 'data.table', 'pROC', 'testthat', 'covr', 'RColorBrewer', 'ggplot2', 'gridExtra', 'VGAM'), repos='http://cran.rstudio.com/', dependencies=T)"
+    R -e "install.packages(c('BiocManager'))"
+    R -e "BiocManager::install(c('Biostrings', 'BiocGenerics', 'rtracklayer', 'GenomeInfoDb', 'S4Vectors', 'IRanges', 'GenomicAlignments', 'GenomicRanges', 'BiocParallel', 'BiocStyle',  'SummarizedExperiment', 'VariantAnnotation', 'TxDb.Mmusculus.UCSC.mm10.knownGene', 'org.Mm.eg.db', 'DNAcopy', 'GenomicFeatures', 'Rsamtools', 'rhdf5'), ask=F, update=F)"
+
+    # Install PureCN
+    wget https://bioconductor.org/packages/release/bioc/src/contrib/PureCN_1.22.1.tar.gz
+    tar -xzf PureCN_1.22.1.tar.gz
+    sed -i "s/.readAndCheckVcf(vcf.file, genome = genome,/.readAndCheckVcf(vcf.file, genome = genome,check.DB = F,/g" PureCN/R/runAbsoluteCN.R
+    R -e "install.packages('PureCN/', repos = NULL, type='source')"
