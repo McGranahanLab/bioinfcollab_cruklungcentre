@@ -1,0 +1,48 @@
+Bootstrap:docker
+From:debian:9.8-slim
+
+%help
+        Main software:
+        deeptools        v.3.5.1          https://deeptools.readthedocs.io
+
+        Example run:
+        bamCoverage --help
+
+%post
+        apt update -y
+        apt upgrade -y
+        apt install -y wget bzip2
+
+        #conda
+        cd /opt
+        rm -fr miniconda
+        # miniconda3
+        wget https://repo.continuum.io/miniconda/Miniconda3-4.7.12-Linux-x86_64.sh -O miniconda.sh
+
+        #install conda
+        bash miniconda.sh -b -p /opt/miniconda
+        export PATH="/opt/miniconda/bin:$PATH"
+        #add channels  
+        conda config --add channels defaults
+        conda config --add channels bioconda
+        conda config --add channels conda-forge
+
+        #install deeptools
+        conda install -c bioconda deeptools=3.3.2
+
+        #cleanup    
+        conda clean -y --all
+        rm -f /opt/miniconda.sh
+        apt autoremove --purge
+        apt clean
+
+
+%environment
+        export LC_ALL=C
+        export LC_NUMERIC=en_GB.UTF-8
+        export PATH="/opt/miniconda/bin:$PATH"
+
+
+%runscript
+        #default runscript: deeptools passing all arguments from cli: $@
+        exec /opt/miniconda/bin/bamCoverage "$@"
