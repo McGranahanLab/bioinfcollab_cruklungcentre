@@ -1,0 +1,30 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+        Main software:
+        HMMcopy-utils v0.1.1
+        
+        Supported by:
+        samtools, tabix, python
+
+        Example run:
+
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%post
+        apt-get -y update 
+        apt-get install -y git wget gnupg2
+        apt-get install -y software-properties-common libopenblas-dev \
+                       libcurl4-openssl-dev libopenmpi-dev openmpi-bin \
+                       openmpi-common openmpi-doc openssh-client \
+                       openssh-server libssh-dev nano cmake  gfortran g++ \
+                       curl autoconf bzip2 libtool libtool-bin tabix \
+                       libncurses5-dev liblzma-dev libbz2-dev
+        apt-get -y update 
+
+        # hmmcopy-utils 
+        /opt/conda/bin/conda install -c bioconda hmmcopy=0.1.1
