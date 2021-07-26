@@ -1,0 +1,22 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        VarScan        v.2.3.9         https://sourceforge.net/projects/varscan/
+
+%labels
+        CREATOR		Maria Litovchenko
+        ORGANIZATION	UCL
+
+%post
+        apt-get -qq -y update
+        apt-get -qq -y install wget gcc libncurses5-dev zlib1g-dev libbz2-dev \
+                               liblzma-dev make openjdk-8-jdk openjdk-8-jre unzip
+
+        apt-get -qq -y install software-properties-common
+        add-apt-repository ppa:deadsnakes/ppa
+        apt-get -qq -y update
+        apt-get -qq -y install python3.8 python-setuptools build-essential \
+                               python3-dev python3-pip
+        wget https://sourceforge.net/projects/varscan/files/VarScan.v2.3.9.jar 
