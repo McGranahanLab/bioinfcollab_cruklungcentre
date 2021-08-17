@@ -6,10 +6,11 @@ From: continuumio/miniconda3
         HMMcopy-utils v0.1.1
         
         Supported by:
-        samtools, tabix, python
+        samtools, tabix, python, bowtie
 
         Example run:
-
+        singularity exec <sif_file_name> mapCounter
+        singularity exec <sif_file_name> /bin/hmmcopy_utils/util/mappability/generateMap.pl
 
 %labels
         CREATOR     Maria Litovchenko
@@ -23,8 +24,19 @@ From: continuumio/miniconda3
                        openmpi-common openmpi-doc openssh-client \
                        openssh-server libssh-dev nano cmake  gfortran g++ \
                        curl autoconf bzip2 libtool libtool-bin tabix \
-                       libncurses5-dev liblzma-dev libbz2-dev
+                       libncurses5-dev liblzma-dev libbz2-dev bowtie
         apt-get -y update 
 
-        # hmmcopy-utils 
+        # hmmcopy-utils via conda - puts mapCounter and gcCounter directly into
+        # PATH, but it's lacking generateMap.pl
         /opt/conda/bin/conda install -c bioconda hmmcopy=0.1.1
+
+        # get generateMap.pl though github
+        cd bin/
+        git clone https://github.com/shahcompbio/hmmcopy_utils
+        cd hmmcopy_utils
+        cmake .
+        make
+
+        cd util/mappability
+        chmod +x generateMap.pl
