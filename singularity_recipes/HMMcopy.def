@@ -21,7 +21,8 @@ From: ubuntu:18.04
         apt-get -qq -y install r-base r-base-core r-recommended
 
         Rscript -e "install.packages(c('BiocManager','optparse', 'readr', \
-                                       'pheatmap', 'RColorBrewer', 'data.table'),
-                                     quietly = TRUE)"
-        Rscript -e "BiocManager::install(c('HMMcopy'),quietly = TRUE, \
+                                       'pheatmap', 'RColorBrewer', 'data.table', \
+                                       'argparse', 'mosaicCalc', \
+                                       'plyr', 'quantreg'), quietly = TRUE)"
+        Rscript -e "BiocManager::install(c('HMMcopy', 'GenomicRanges'),quietly = TRUE, \
                                          ask=FALSE, update=FALSE)"
