@@ -23,6 +23,9 @@ From: ubuntu:18.04
         Rscript -e "install.packages(c('BiocManager','optparse', 'readr', \
                                        'pheatmap', 'RColorBrewer', 'data.table', \
                                        'argparse', 'mosaicCalc', \
-                                       'plyr', 'quantreg'), quietly = TRUE)"
-        Rscript -e "BiocManager::install(c('HMMcopy', 'GenomicRanges'),quietly = TRUE, \
-                                         ask=FALSE, update=FALSE)"
+                                       'plyr', 'quantreg', 'colorblindcheck', \
+                                       'ggplot2', 'khroma'), quietly = TRUE)"
+        Rscript -e "BiocManager::install(c('HMMcopy', 'GenomicRanges', 'limma', \
+                                           'DNAcopy', 'copynumber'), \
+                                         quietly = TRUE, ask=FALSE, \
+                                         update=FALSE)"
