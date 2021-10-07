@@ -4,7 +4,8 @@ From: ubuntu:18.04
 %help
         Main software:
         gatk        v.3.8-1-0          https://storage.googleapis.com/gatk-software/package-archive/gatk/GenomeAnalysisTK-3.8-1-0-gf15c1c3ef.tar.bz2
-	    gatk	    v.4.1.8.1          https://github.com/broadinstitute/gatk/
+	gatk	    v.4.2.2.0         https://github.com/broadinstitute/gatk/
+        
         To call GATK v.3 : java -jar /bin/GATK3.jar
         To call GATK v.4 : gatk
 
@@ -26,17 +27,17 @@ From: ubuntu:18.04
         cd bin
 
         # GATK v.3
-	    wget https://storage.googleapis.com/gatk-software/package-archive/gatk/GenomeAnalysisTK-3.8-1-0-gf15c1c3ef.tar.bz2
+	wget https://storage.googleapis.com/gatk-software/package-archive/gatk/GenomeAnalysisTK-3.8-1-0-gf15c1c3ef.tar.bz2
         tar -xf GenomeAnalysisTK-3.8-1-0-gf15c1c3ef.tar.bz2
         mv GenomeAnalysisTK-3.8-1-0-gf15c1c3ef/GenomeAnalysisTK.jar .
         mv GenomeAnalysisTK.jar GATK3.jar
         rm -r GenomeAnalysisTK-3.8-1-0-gf15c1c3ef*
 
         # GATK v.4
-        wget https://github.com/broadinstitute/gatk/releases/download/4.1.8.1/gatk-4.1.8.1.zip
-        unzip gatk-4.1.8.1.zip
-        rm gatk-4.1.8.1.zip
+        wget https://github.com/broadinstitute/gatk/releases/download/4.2.2.0/gatk-4.2.2.0.zip
+        unzip gatk-4.2.2.0.zip
+        rm gatk-4.2.2.0.zip
 
 
 %environment
-        PATH=$PATH:/bin/gatk-4.1.8.1/:$PATH
+        PATH=$PATH:/bin/gatk-4.2.2.0/:$PATH
