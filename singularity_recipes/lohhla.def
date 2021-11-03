@@ -1,0 +1,108 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+        Main software:
+        LOHHLA  v1 https://bitbucket.org/mcgranahanlab/lohhla/src/master/
+        
+        Supported by:
+        novoalign
+        samtools
+        bedtools
+        GATK.jar
+        picard.jar
+        jellyfish
+
+        Example run:
+        Rscript LOHHLA.R \
+                --patient_id <patient_id> \
+                --out_dir <output_directory> \
+                --tumour_bams <path_to_tumor_bam> \
+                --normal_bam <path_to_normal_bam> \
+                --patient_hla_alleles <hla_hd_output> \
+                --min_coverage 30 \
+                --kmer_size 30 \
+                --max_mismatch 1 \
+                --fish_reads \
+                --HLA_fasta <path to hla fasta file> \
+                --hla_region_coordinates <path to hla region coordinates> \
+                --HLA_exons <path to exon data> \
+                --plotting_step 
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%post
+    apt-get -y update 
+    apt-get install -y git wget gnupg2
+    apt-get install -y software-properties-common libopenblas-dev libcurl4-openssl-dev \
+                       libopenmpi-dev openmpi-bin openmpi-common \
+                       openmpi-doc openssh-client openssh-server \
+                       libssh-dev nano cmake  gfortran g++ curl \
+                       autoconf bzip2 libtool libtool-bin 
+    apt-get -y update 
+    apt-get install -y --fix-missing python-dev python-pip
+
+    # Install R
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+    add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran40/'
+    apt-get -qq -y dist-upgrade
+    apt-get -qq -y install r-base r-base-core r-recommended
+
+    # Install jellyfish
+    apt install -y jellyfish
+
+    # Install novoalign
+    /opt/conda/bin/conda install python=3.7
+    /opt/conda/bin/conda install -c cyclus java-jre
+    /opt/conda/bin/conda install -c bioconda java-jdk
+    /opt/conda/bin/conda install -c compbiocore novoalign 
+
+    # samtools 
+    cd bin
+    wget https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2
+    tar -xf samtools-1.10.tar.bz2
+    cd samtools-1.10
+    ./configure
+    make
+    make install
+    cd ../
+    rm samtools-1.10.tar.bz2
+    export PATH=$PATH:/bin/samtools-1.10/
+
+    mkdir bedtools
+    cd bedtools
+    wget https://github.com/arq5x/bedtools2/releases/download/v2.29.2/bedtools.static.binary
+    mv bedtools.static.binary bedtools
+    chmod a+x bedtools
+    cd ../
+    
+    wget https://storage.googleapis.com/gatk-software/package-archive/gatk/GenomeAnalysisTK-3.8-1-0-gf15c1c3ef.tar.bz2
+    tar -xf GenomeAnalysisTK-3.8-1-0-gf15c1c3ef.tar.bz2
+    mv GenomeAnalysisTK-3.8-1-0-gf15c1c3ef/GenomeAnalysisTK.jar .
+    mv GenomeAnalysisTK.jar GATK.jar
+    rm -r GenomeAnalysisTK-3.8-1-0-gf15c1c3ef*
+
+    # picard
+    wget https://github.com/broadinstitute/picard/releases/download/1.141/picard-tools-1.141.zip
+    unzip picard-tools-1.141.zip
+
+    cd ../
+
+    wget https://bioconductor.org/packages/release/bioc/src/contrib/BiocGenerics_0.38.0.tar.gz
+    wget https://bioconductor.org/packages/release/bioc/src/contrib/S4Vectors_0.30.0.tar.gz
+    Rscript -e 'install.packages("BiocGenerics_0.36.0.tar.gz", repos = NULL, type = "source")'
+    Rscript -e 'install.packages("S4Vectors_0.28.1.tar.gz", repos = NULL, type = "source")'
+    Rscript -e 'install.packages("BiocManager")'
+    Rscript -e 'install.packages(c("argparse", "data.table", "zoo", "beeswarm", "seqinr"), quietly = TRUE)'
+    Rscript -e 'BiocManager::install(c("Biostrings", "Rsamtools"), ask = FALSE, update = FALSE)'
+    rm BiocGenerics_0.38.0.tar.gz S4Vectors_0.30.0.tar.gz
+
+    wget https://www.dropbox.com/s/o68logeoyh82oph/tracerx.LOHHLA.31_04_21.R
+    mv tracerx.LOHHLA.31_04_21.R LOHHLA.R
+    
+%environment
+    export PATH=$PATH:/bin/samtools-1.10/bin:$PATH
+    export PATH=$PATH:/bin/bedtools/:$PATH
+    export PATH=$PATH:/opt/conda/bin/:$PATH

@@ -1,0 +1,50 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+    Main software:
+    MEDICC  v2  https://bitbucket.org/schwarzlab/medicc2/src/master/    
+
+    Supported by:
+
+    Example run:
+    medicc2  --help
+
+%labels
+    CREATOR     Maria Litovchenko
+    ORGANIZATION    UCL
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    TZ='Europe/Moscow'
+    export TZ
+
+    apt-get -y update
+    apt-get -y upgrade
+    apt-get install -y software-properties-common build-essential \
+                       curl zlib1g-dev libbz2-dev unzip wget \
+                       procps libcurl4-gnutls-dev\
+                       libssl-dev libz-dev git-all gfortran libxml2-dev \
+                       libgit2-dev libssl-dev libncurses5-dev liblzma-dev \
+                       bzip2 gcc g++ make \
+                       tabix libparallel-forkmanager-perl
+    apt-get -y update
+    apt-get -y upgrade
+
+    # install python 3.9
+    /opt/conda/bin/conda install python=3.9
+
+    # install dependencies
+    /opt/conda/bin/conda install -c conda-forge openfst
+    /opt/conda/bin/conda install -c conda-forge biopython=1.78
+    /opt/conda/bin/conda install -c conda-forge numpy=1.20.1 scipy=1.6.0 \
+                                 pandas=1.2.2 matplotlib=3.3.4 \
+                                 seaborn=0.11.1 cython=0.29.21 \
+                                 scikit-learn=0.24.2 \
+                                 plotnine=0.8.0 pytest=6.2.3
+    /opt/conda/bin/pip install PyYAML
+
+    # install medicc2
+    git clone --recursive https://bitbucket.org/schwarzlab/medicc2.git
+    cd medicc2
+    /opt/conda/bin/pip install .

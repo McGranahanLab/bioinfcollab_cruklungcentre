@@ -1,0 +1,26 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+        Main software:
+        open-cravat    v.2.2.7    https://open-cravat.readthedocs.io/en/latest/index.html
+	CHASMplus	
+
+        Example run:
+        oc module info chasmplus
+
+	ATTENTION! TO CREATE CONTAINER USE ONLY CLOUD! ONLY CREATE IT WITH ONE OF
+	chasmplus / chasmplus_LUAD / chasmplus_LUSC. otherwise container build takes
+        too long.
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%post
+        apt-get update && apt-get install -y git libc6
+
+        /opt/conda/bin/conda install python=3.9
+        /opt/conda/bin/conda install -c conda-forge -c bioconda \
+                                     -y numpy pandas scipy open-cravat
+        /opt/conda/bin/oc module install -y chasmplus chasmplus_LUAD chasmplus_LUSC
