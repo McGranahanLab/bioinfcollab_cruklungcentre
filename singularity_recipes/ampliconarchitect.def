@@ -3,8 +3,14 @@ From: continuumio/miniconda
 
 
 %help
-Main software:
+    Main software:
 	AmpliconArchitect v.2 https://github.com/virajbdeshpande/AmpliconArchitect
+	PrepareAA		   v.1 https://github.com/jluebeck/PrepareAA
+
+	Supported by:
+	samtools v1.10
+	bwa v0.7.17
+	picard
 
 	!!! ATTENTION !!!
 	Mosek lisence should be in the container! Please follow next steps to 
@@ -17,6 +23,10 @@ Main software:
 	5. Remove ?dl=0 at the end of the link
 	6. Replace with your link everything wget on line 53
 
+	Example run:
+	singularity exec ampliconarchitect_v19jan2022.sif /AmpliconArchitect/src/AmpliconArchitect.py --help
+	singularity exec ampliconarchitect_v19jan2022.sif /PrepareAA/PrepareAA.py -h
+
 %labels
 	CREATOR Maria Litovchenko
 	ORGANIZATION UCL
@@ -26,15 +36,24 @@ Main software:
 	exec /opt/conda/bin/python "$@"
 
 %environment
-export MOSEKPLATFORM=linux64x86
-export PATH=$PATH:/mosek/8/tools/platform/$MOSEKPLATFORM/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/mosek/8/tools/platform/$MOSEKPLATFORM/bin
-export MOSEKLM_LICENSE_FILE=/mosek/8/licenses
+    export MOSEKPLATFORM=linux64x86
+    export PATH=$PATH:/mosek/8/tools/platform/$MOSEKPLATFORM/bin
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/mosek/8/tools/platform/$MOSEKPLATFORM/bin
+    export MOSEKLM_LICENSE_FILE=/mosek/8/licenses
+    export PATH=$PATH:/bin/samtools-1.10/
+    export PATH=$PATH:/bin/bwa-0.7.17/
+    export PATH=$PATH:/opt/conda/bin/
+
 
 %post
-	apt-get update && apt-get install -y procps libcurl4-openssl-dev \
+    export DEBIAN_FRONTEND=noninteractive
+	rm -rf /var/lib/apt/lists/*
+	apt-get update -y
+	apt-get upgrade -y
+	apt-get install -y procps libcurl4-openssl-dev \
 		libssl-dev gcc libz-dev zlib1g-dev git-all wget \
-		build-essential gfortran samtools python-dev
+		build-essential gfortran samtools python-dev libbz2-dev \
+		liblzma-dev libncurses5-dev
 
 	/opt/conda/bin/conda install -c anaconda pip
 
@@ -58,4 +77,29 @@ export MOSEKLM_LICENSE_FILE=/mosek/8/licenses
 	python setup.py install #(--user)
 	cd -
 
+    git clone https://github.com/jluebeck/PrepareAA.git
 	git clone https://github.com/jluebeck/AmpliconArchitect.git
+
+	# samtools 
+	cd bin
+    wget https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2
+    tar -xf samtools-1.10.tar.bz2
+    cd samtools-1.10
+    ./configure
+    make
+    make install
+    cd ../
+    rm samtools-1.10.tar.bz2
+    export PATH=$PATH:/bin/samtools-1.10/
+
+    # picard
+    wget https://github.com/broadinstitute/picard/releases/download/2.23.3/picard.jar
+
+    # BWA
+    wget https://github.com/lh3/bwa/releases/download/v0.7.17/bwa-0.7.17.tar.bz2
+    tar -xf bwa-0.7.17.tar.bz2
+    rm bwa-0.7.17.tar.bz2
+    cd bwa-0.7.17
+    make
+    cd ../
+    export PATH=$PATH:/bin/bwa-0.7.17/

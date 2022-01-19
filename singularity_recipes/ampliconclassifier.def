@@ -2,17 +2,13 @@ Bootstrap: docker
 From: continuumio/miniconda
 
 %help
-    Main software:
-	PrepareAA		   v.1 https://github.com/jluebeck/PrepareAA
-	AmpliconArchitect  v.2 https://github.com/virajbdeshpande/AmpliconArchitect
+Main software:
 	AmpliconClassifier v.1 https://github.com/jluebeck/AmpliconClassifier.git
 
 	Supported by:
 	samtools v1.10
 	bwa v0.7.17
-	numpy==1.16.6 scipy==1.2.4 matplotlib==2.2.5 pysam==0.16.0.1 
-	Flask==1.1.2 gdown==3.12.2 intervaltree==3.1.0 biopython==1.76
-	cnvkit==0.9.6
+	matplotlib intervaltree
 
 	!!! ATTENTION !!!
 	Mosek lisence should be in the container! Please follow next steps to 
@@ -29,9 +25,7 @@ From: continuumio/miniconda
 	python 2.7
 
 	Example run:
-	singularity exec ampliconarchitect_ampliconclassifier_v17jan2021.sif /AmpliconArchitect/src/AmpliconArchitect.py --help
-	singularity exec ampliconarchitect_ampliconclassifier_v17jan2021.sif /AmpliconClassifier/amplicon_classifier.py —help
-	singularity exec ampliconarchitect_ampliconclassifier_v17jan2021.sif /PrepareAA/PrepareAA.py -h
+	singularity exec ampliconarchitect_ampliconclassifier_v19jan2022.sif /AmpliconClassifier/amplicon_classifier.py —help
 
 %labels
 	CREATOR Maria Litovchenko
@@ -58,22 +52,16 @@ From: continuumio/miniconda
 					   wget make tabix git-all procps \
 					   gfortran libz-dev zlib1g-dev libssl-dev \
 					   libbz2-dev liblzma-dev libxml2-dev libgit2-dev \
-					   libncurses5-dev
+					   libncurses5-dev libcurl4-openssl-dev
 	apt-get install -y python-dev python-pip
 
 	# install pip and java-jdk/jre
+	/opt/conda/bin/conda install python=3.9
 	/opt/conda/bin/conda install -c anaconda pip
 	/opt/conda/bin/conda install -c cyclus java-jre
 	/opt/conda/bin/conda install -c bioconda java-jdk
 	/opt/conda/bin/conda install -c conda-forge r-base
-
-  	# CNVkit and other dependencies with python 2.7. Beware: 0.9.6 is the last 
-  	# version of cnvkit which supports python 2.7
-  	PIP_TARGET_DIR=/opt/conda/lib/python2.7/site-packages/
-	/opt/conda/bin/pip install numpy==1.16.6 scipy==1.2.3 matplotlib==2.2.5 \
-	                           pysam==0.16.0.1 Flask==1.1.2 gdown==3.12.2 \
-	                           intervaltree==3.1.0 biopython==1.76\
-	                           cnvkit==0.9.6 --target $PIP_TARGET_DIR
+	/opt/conda/bin/conda install -c conda-forge matplotlib intervaltree
 
 	# samtools 
 	cd bin
@@ -119,8 +107,5 @@ From: continuumio/miniconda
 	cd - # in bin
 	cd ../ # in root
 
-	git clone https://github.com/jluebeck/PrepareAA.git
-	git clone https://github.com/jluebeck/AmpliconArchitect.git
 	git clone https://github.com/jluebeck/AmpliconClassifier.git
-	# to switch to python2
-	sed -i 's/python3/python2/' /AmpliconClassifier/amplicon_classifier.py /AmpliconClassifier/amplicon_similarity.py /AmpliconClassifier/get_genes.py
+	
