@@ -67,7 +67,6 @@ Main software:
     export PATH=$PATH:/bin/samtools-1.10/
 
 	# MOSEK and it's licence
-  	/opt/conda/bin/conda install -c mosek mosek=8
 	# mosek installation
 	wget http://download.mosek.com/stable/8.0.0.60/mosektoolslinux64x86.tar.bz2
 	tar xf mosektoolslinux64x86.tar.bz2
