@@ -1,13 +1,12 @@
 Bootstrap: docker
-From: continuumio/miniconda
+From: continuumio/anaconda3 
 
 %help
 Main software:
 	AmpliconClassifier v.1 https://github.com/jluebeck/AmpliconClassifier.git
 
 	Supported by:
-	samtools v1.10
-	bwa v0.7.17
+	samtools
 	matplotlib intervaltree
 
 	!!! ATTENTION !!!
@@ -21,11 +20,8 @@ Main software:
 	5. Remove ?dl=0 at the end of the link
 	6. Replace with your link everything wget on line 53
 
-	Beware that cnvkit is of VERY OLD verion, the last one which can handle 
-	python 2.7
-
 	Example run:
-	singularity exec ampliconarchitect_ampliconclassifier_v19jan2022.sif /AmpliconClassifier/amplicon_classifier.py —help
+	singularity exec ampliconclassifier_v28jan2022.sif /AmpliconClassifier/amplicon_classifier.py —help
 
 %labels
 	CREATOR Maria Litovchenko
@@ -39,9 +35,6 @@ Main software:
 	export PATH=$PATH:/mosek/8/tools/platform/$MOSEKPLATFORM/bin
 	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/mosek/8/tools/platform/$MOSEKPLATFORM/bin
 	export MOSEKLM_LICENSE_FILE=/mosek/8/licenses
-	export PATH=$PATH:/bin/samtools-1.10/
-    export PATH=$PATH:/bin/bwa-0.7.17/
-    export PATH=$PATH:/opt/conda/bin/
 
 %post
 	export DEBIAN_FRONTEND=noninteractive
@@ -49,19 +42,17 @@ Main software:
 	apt-get update -y
 	apt-get upgrade -y
 	apt-get install -y build-essential software-properties-common gcc unzip \
-					   wget make tabix git-all procps \
+					   wget make tabix procps \
 					   gfortran libz-dev zlib1g-dev libssl-dev \
 					   libbz2-dev liblzma-dev libxml2-dev libgit2-dev \
 					   libncurses5-dev libcurl4-openssl-dev
-	apt-get install -y python-dev python-pip
 
-	# install pip and java-jdk/jre
-	/opt/conda/bin/conda install python=3.9
-	/opt/conda/bin/conda install -c anaconda pip
+	# install java-jdk/jre
 	/opt/conda/bin/conda install -c cyclus java-jre
 	/opt/conda/bin/conda install -c bioconda java-jdk
 	/opt/conda/bin/conda install -c conda-forge r-base
 	/opt/conda/bin/conda install -c conda-forge matplotlib intervaltree
+    /opt/conda/bin/conda install -c anaconda git
 
 	# samtools 
 	cd bin
@@ -74,18 +65,6 @@ Main software:
     cd ../
     rm samtools-1.10.tar.bz2
     export PATH=$PATH:/bin/samtools-1.10/
-
-    # picard
-    wget https://github.com/broadinstitute/picard/releases/download/2.23.3/picard.jar
-
-    # BWA
-    wget https://github.com/lh3/bwa/releases/download/v0.7.17/bwa-0.7.17.tar.bz2
-    tar -xf bwa-0.7.17.tar.bz2
-    rm bwa-0.7.17.tar.bz2
-    cd bwa-0.7.17
-    make
-    cd ../
-    export PATH=$PATH:/bin/bwa-0.7.17/
 
 	# MOSEK and it's licence
   	/opt/conda/bin/conda install -c mosek mosek=8
@@ -102,7 +81,7 @@ Main software:
 	mkdir $PWD/mosek/8/licenses/
 	mv mosek.lic $PWD/mosek/8/licenses/
 	echo export MOSEKLM_LICENSE_FILE=$PWD/mosek/8/licenses >> ~/.bashrc
-	cd $PWD/mosek/8/tools/platform/linux64x86/python/2/
+	cd $PWD/mosek/8/tools/platform/linux64x86/python/3/
 	python setup.py install #(--user)
 	cd - # in bin
 	cd ../ # in root
