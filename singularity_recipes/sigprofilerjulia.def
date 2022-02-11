@@ -4,7 +4,7 @@ From: julia:1.3
 %help
     Main software:
     sigprofilerjulia v03_03_2021 https://github.com/oriolpich/sigprofilerjulia
-    MultiModalMuSig v20_01_2022 https://juliahub.com/ui/Packages/MultiModalMuSig/iXS5Q/0.2.2
+    MultiModalMuSig v04_02_2022 https://juliahub.com/ui/Packages/MultiModalMuSig/iXS5Q/0.2.2
 
     Run with:
     singularity exec sigprofiler_multdelMuSig_julia.sif julia /bin/sigprofilerjulia/SigProfilerJulia.jl
@@ -25,17 +25,25 @@ From: julia:1.3
     julia -e 'using Pkg;pkg"add ClusterManagers"'
     julia -e 'using Pkg;pkg"add CSV"'
     julia -e 'using Pkg;pkg"add DataFrames"'
+    julia -e 'using Pkg;pkg"add DelimitedFiles"'
     julia -e 'using Pkg;pkg"add Distances"'
     julia -e 'using Pkg;pkg"add Distributed"'
-    julia -e 'using Pkg;pkg"add StatsBase"'
+    julia -e 'using Pkg;pkg"add Distributions"'
+    julia -e 'using Pkg;pkg"add JLD"'
     julia -e 'using Pkg;pkg"add JuMP"'
     julia -e 'using Pkg;pkg"add Ipopt"'
-    julia -e 'using Pkg;pkg"add MathOptInterface"'
-    julia -e 'using Pkg;pkg"add Distributions"'
+    julia -e 'using Pkg;pkg"add LinearAlgebra"'
     julia -e 'using Pkg;pkg"add LineSearches"'
+    julia -e 'using Pkg;pkg"add MathOptInterface"'
+    julia -e 'using Pkg;pkg"add MultiModalMuSig"'
+    julia -e 'using Pkg;pkg"add NLopt"'
     julia -e 'using Pkg;pkg"add NLsolve"'
     julia -e 'using Pkg;pkg"add Optim"'
-    julia -e 'using Pkg;pkg"add MultiModalMuSig"'
+    julia -e 'using Pkg;pkg"add ProgressMeter"'
+    julia -e 'using Pkg;pkg"add Random"'
+    julia -e 'using Pkg;pkg"add Statistics"'
+    julia -e 'using Pkg;pkg"add StatsBase"'
+    julia -e 'using Pkg;pkg"add VegaLite"'
     # Permissions
     chmod -R 645 /opt/julia
 
