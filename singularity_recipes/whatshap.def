@@ -1,0 +1,38 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+    Main software:
+    WHATSHAP v1.2.1 https://whatshap.readthedocs.io/en/latest/
+
+    Supported by:
+    conda
+
+    Example run:
+    singularity exec whatshap.sif whatshap phase
+
+%labels
+    CREATOR     Maria Litovchenko
+    ORGANIZATION    UCL
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    TZ='Europe/Moscow'
+    export TZ
+
+    apt-get -y update
+    apt-get -y upgrade
+    apt-get install -y software-properties-common build-essential \
+                       curl zlib1g-dev libbz2-dev unzip wget \
+                       procps libcurl4-gnutls-dev\
+                       libssl-dev libz-dev git gfortran libxml2-dev \
+                       libgit2-dev libssl-dev libncurses5-dev liblzma-dev \
+                       bzip2 gcc g++ make \
+                       tabix libparallel-forkmanager-perl
+
+    # install python 3.9
+    /opt/conda/bin/conda install python=3.9
+
+    # install dependencies
+    /opt/conda/bin/conda install -c conda-forge -c defaults \
+                                 -c bioconda whatshap nomkl
