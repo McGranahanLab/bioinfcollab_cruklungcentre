@@ -1,0 +1,77 @@
+bootstrap: docker
+From: ensemblorg/ensembl-vep:release_101.0
+
+%help
+    Main software:
+        MePeXI    v06_03_2022    https://github.com/ambj/MuPeXI/
+
+    Supported by:
+        ensembl-vep    v.101    https://www.ensembl.org/info/docs/tools/vep/index.html
+        netMHCpan      v.4.1    https://services.healthtech.dtu.dk/
+
+%labels
+    CREATOR     Maria Litovchenko
+    ORGANIZATION    UCL
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    TZ='Europe/London'
+    export TZ
+
+    apt-get upgrade -y 
+    apt-get update -y
+    bash -c 'echo "nameserver 127.0.0.1" >> /etc/resolv.conf'
+    bash -c 'echo "nameserver 8.8.8.8" >> /etc/resolv.conf'
+    apt-get update
+
+    locale-gen "en_US.UTF-8"
+    dpkg-reconfigure locales
+    echo LC_ALL=en_US.UTF-8 >> /etc/environment
+    echo LANG=en_US.UTF-8 >> /etc/environment
+
+    apt-get install -y --fix-missing autoconf gcc g++ git make ssh wget vim \
+                       build-essential software-properties-common curl \
+                       ca-certificates zip unzip git \
+                       python-dev libffi-dev
+    
+    # make python 2 default
+    update-alternatives --install /usr/bin/python python /usr/bin/python2 1
+    # install pip
+    curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+    python2 get-pip.py
+    # install libraries
+    pip2 install biopython==1.76
+    pip2 install numpy
+    pip2 install pandas
+    pip2 install psutil
+
+    # install netMHCpan 
+    apt-get install -y tcsh
+    wget https://www.dropbox.com/s/13ojkun7vr946qu/netMHCpan-4.1b.Linux.tar.gz
+    tar -xvzf netMHCpan-4.1b.Linux.tar.gz 
+    cd netMHCpan-4.1
+    # This will produce a directory 'data'. It is necessary  for the 
+    # NetMHCpan 4.1 software to operate;  once it is installed you may delete
+    # the 'data.tar.gz' file; it will not be needed.
+    wget https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/data.tar.gz
+    tar -xvf data.tar.gz
+    # In the 'netMHCpan-4.1' directory edit the script 'netMHCpan':
+    before=/net/sund-nas.win.dtu.dk/storage/services/www/packages/netMHCpan/4.1/netMHCpan-4.1
+    after=`pwd`
+    sed -i "s@$before@$after@g" netMHCpan
+    # Set TMPDIR to the full path to the temporary directory of you choice. It 
+    # must be user-writable. You may for example set it to $NMHOME/tmp (and 
+    # create the tmp folder in the netMHCpan-4.1 directory).
+    before='/tmp'
+    after='tmp/'
+    sed -i "s@$before@$after@g" netMHCpan
+
+    # install MuPeXI
+    git clone https://github.com/ambj/MuPeXI.git
+
+%environment
+    PATH=$PATH:/opt/vep/src/ensembl-vep/:$PATH
+    PATH=$PATH:/netMHCpan-4.1/:$PATH
+
+%runscript
+    mkdir tmp/
