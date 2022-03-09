@@ -42,7 +42,7 @@
 [PureCN](https://bioconductor.org/packages/release/bioc/html/PureCN.html) | v2.0.2 | |
 [pyclone-vi](https://github.com/Roth-Lab/pyclone-vi/)															    | v.1.0.2         | |
 [samtools](http://www.htslib.org/)                                                                                  | v1.10           | |
-[sequenza](https://cran.r-project.org/web/packages/sequenza/vignettes/sequenza.html|v2019-05-09||
+[sequenza](https://cran.r-project.org/web/packages/sequenza/vignettes/sequenza.html)|v2019-05-09||
 [sigprofilerjulia](https://bitbucket.org/bbglab/sigprofilerjulia/src/master/) | v1 | |
 [SigProfilerMatrixGenerator](https://github.com/AlexandrovLab/SigProfilerMatrixGenerator) | v1.2 | |
 [snpEff](http://pcingola.github.io/SnpEff/) | v5.1 | |
