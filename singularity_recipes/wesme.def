@@ -1,0 +1,26 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+    Main software:
+    WESME        v.1.0.0          https://www.ncbi.nlm.nih.gov/CBBresearch/Przytycka/index.cgi#wesme
+
+    Example run:
+    singularity shell wesme_v1.0.0.sif python comp_sample_weights.py -h
+
+%labels
+    CREATOR     Maria Litovchenko
+    ORGANIZATION    UCL
+
+%runscript
+    exec /opt/conda/bin/python "$@"
+
+%post
+    apt-get update
+    apt-get install -y zip unzip wget
+
+    /opt/conda/bin/conda install python=3.7
+    /opt/conda/bin/conda install --channel conda-forge -y pandas numpy \
+                                     scipy scikit-misc networkx=1.11
+    wget https://www.dropbox.com/s/ogvrvlkh5rwifxn/wsampling.zip
+    unzip wsampling.zip
