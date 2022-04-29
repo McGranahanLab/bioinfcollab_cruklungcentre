@@ -7,7 +7,11 @@ From: mgibio/bam-readcount
 
         Supported by:
         bam-readcount   v1.0.1         https://github.com/genome/bam-readcount/
-        fpfilter-tool   v1.0.1         https://github.com/genome/fpfilter-tool
+        fpfilter-tool   v1.0.1         https://github.com/ckandoth/variant-filter
+
+        Note:
+        Do not use https://github.com/genome/fpfilter-tool, it tries to crete
+        folders inside container and I don't know how to fix it.
 
 %labels
         CREATOR		Maria Litovchenko
@@ -24,11 +28,22 @@ From: mgibio/bam-readcount
         apt-get -qq -y update
         apt-get -qq -y install python3.8 python-setuptools build-essential \
                                python3-dev python3-pip
+
+        # install VarScan
         wget https://sourceforge.net/projects/varscan/files/VarScan.v2.3.9.jar 
 
+        # install samtools
+        cd bin
+        wget https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2
+        tar -xf samtools-1.10.tar.bz2
+        cd samtools-1.10
+        ./configure
+        make
+        make install
+        cd ../../
+
         # install fpfilter-tool
-        git clone https://github.com/genome/fpfilter-tool
+        wget https://raw.githubusercontent.com/ckandoth/variant-filter/master/fpfilter.pl
 
 %environment
-        PATH=$PATH:/bam-readcount/:$PATH
-        PATH=$PATH:/fpfilter-tool/:$PATH
+        PATH=$PATH:/bin/samtools-1.10/bin:$PATH
