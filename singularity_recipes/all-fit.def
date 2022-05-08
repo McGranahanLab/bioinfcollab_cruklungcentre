@@ -1,0 +1,27 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+        Main software:
+        All-FIT        v.1.0.0          https://github.com/KhiabanianLab/All-FIT
+
+        Example run:
+        singularity exec all-fit_v1.0.0.sif python /All-FIT.py --help
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%runscript
+        exec /opt/conda/bin/python "$@"
+
+%post
+        apt-get update && apt-get install -y git
+
+        /opt/conda/bin/conda install python=3.8
+        /opt/conda/bin/conda install --channel conda-forge --channel bioconda \
+                                     -y numpy matplotlib pandas scipy seaborn
+
+        git clone https://github.com/KhiabanianLab/All-FIT
+        mv All-FIT/* .
+        rm -r All-FIT/
