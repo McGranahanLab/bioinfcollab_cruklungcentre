@@ -12,7 +12,11 @@ From: rstudio/r-base:4.0-focal
   VERSION         v0.0.1  
 
 %post 
-  apt-get update && apt-get install -y git libssl-dev libxml2-dev
+  apt-get update && apt-get install -y git libssl-dev libxml2-dev  \
+                                       software-properties-common
+  add-apt-repository ppa:deadsnakes/ppa
+  apt-get update -y
+  apt-get install -y python3.8
   
   # installation of GenomicRanges from Bioconductor
   Rscript -e "install.packages(c('data.table', 'argparse'), repos = 'http://cran.us.r-project.org', quietly = T)"
