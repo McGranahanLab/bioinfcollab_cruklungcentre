@@ -12,23 +12,22 @@ From: rstudio/r-base:4.0-focal
   VERSION         v0.0.1  
 
 %post 
-  apt-get update && apt-get install -y git
+  apt-get update && apt-get install -y git libssl-dev libxml2-dev
   
   # installation of GenomicRanges from Bioconductor
-  Rscript -e "install.packages(c('BiocManager', 'data.table', 'tools', 'argparse'), repos = 'http://cran.us.r-project.org', quietly = T)"
-  Rscript -e "BiocManager::install(c('GenomicRanges', 'biomaRt', 'TxDb.Hsapiens.UCSC.hg38.knownGene', 'rtracklayer'), ask = F, update = F)"
+  Rscript -e "install.packages(c('data.table', 'argparse'), repos = 'http://cran.us.r-project.org', quietly = T)"
+
+  Rscript -e "install.packages(c('openssl', 'XML', 'xml2', 'httr'), repos = 'http://cran.us.r-project.org', quietly = T)"
+
+  Rscript -e "install.packages(c('BiocManager'), repos = 'http://cran.us.r-project.org', quietly = T, dependencies = T)"
+
+  Rscript -e "BiocManager::install(c('biomaRt', 'rtracklayer', 'BiocFileCache'), ask = F, update = F)"
+
+  Rscript -e "BiocManager::install(c('GenomicRanges', 'TxDb.Hsapiens.UCSC.hg38.knownGene'), ask = F, update = F)"
+
+  Rscript -e "BiocManager::install(c('seqinr', 'poilog', 'plyr'), ask = F, update = F)" 
 
   git clone https://github.com/marialitovchenko/dNdScv_0.1.0_indel.git
 
   # installation of modified dNdScv package from github
-  Rscript -e "install.packages('dNdScv_0.1.0_indel', repos = NULL, type = "source")"
-
-%test
-  Rscript -e "library(argparse)"
-  Rscript -e "library(data.table)"
-  Rscript -e "library(tools)"
-  Rscript -e "library(GenomicRanges)"
-  Rscript -e "library(biomaRt)"
-  Rscript -e "library(TxDb.Hsapiens.UCSC.hg38.knownGene)"
-  Rscript -e "library(rtracklayer)"
-  Rscript -e "library(dndscv)"
+  Rscript -e "install.packages('dNdScv_0.1.0_indel', repos = NULL, type = 'source')"
