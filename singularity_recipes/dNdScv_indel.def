@@ -1,0 +1,34 @@
+Bootstrap: docker
+From: rstudio/r-base:4.0-focal
+
+%help
+  A container with modified version of dNdScv (https://github.com/im3sanger/dndscv)
+  with expected number of indels added to the output 
+
+%labels
+  CREATOR         Maria Litovchenko
+  ORGANIZATION    UCL CANCER INSTITUTE
+  EMAIL           m.litovchenko@ucl.ac.uk
+  VERSION         v0.0.1  
+
+%post 
+  apt-get update && apt-get install -y git
+  
+  # installation of GenomicRanges from Bioconductor
+  Rscript -e "install.packages(c('BiocManager', 'data.table', 'tools', 'argparse'), repos = 'http://cran.us.r-project.org', quietly = T)"
+  Rscript -e "BiocManager::install(c('GenomicRanges', 'biomaRt', 'TxDb.Hsapiens.UCSC.hg38.knownGene', 'rtracklayer'), ask = F, update = F)"
+
+  git clone https://github.com/marialitovchenko/dNdScv_0.1.0_indel.git
+
+  # installation of modified dNdScv package from github
+  Rscript -e "install.packages('dNdScv_0.1.0_indel', repos = NULL, type = "source")"
+
+%test
+  Rscript -e "library(argparse)"
+  Rscript -e "library(data.table)"
+  Rscript -e "library(tools)"
+  Rscript -e "library(GenomicRanges)"
+  Rscript -e "library(biomaRt)"
+  Rscript -e "library(TxDb.Hsapiens.UCSC.hg38.knownGene)"
+  Rscript -e "library(rtracklayer)"
+  Rscript -e "library(dndscv)"
