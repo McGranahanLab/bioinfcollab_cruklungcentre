@@ -16,34 +16,17 @@ From: continuumio/miniconda3
         exec /opt/conda/bin/python "$@"
 
 %post
-        apt-get update && apt-get install -y git wget
+        apt-get update && apt-get install -y wget curl unzip zip bzip2 tabix git \
+                gfortran perl gcc g++ make cmake build-essential \
+                software-properties-common autoconf ca-certificates libgcc-9-dev \
+                libopenblas-dev libblas-dev
+
         /opt/conda/bin/conda install python=3.7
         /opt/conda/bin/conda install --channel conda-forge --channel bioconda \
-                                     --channel default -c smshuai -y driverpower
-
-        # Get the helper
-        wget -q https://raw.githubusercontent.com/smshuai/DriverPower/master/script/prepare.py
-
-        # get train data. Be careful! It might be usefull to upload them to GEL
-        # via separate containers because files are quite large
-        wget -q  https://figshare.com/ndownloader/files/12352232
-        mv 12352232 train_feature.hdf5.part1
-        wget -q https://figshare.com/ndownloader/files/12352331
-        mv 12352331 train_feature.hdf5.part2
-        wget -q https://figshare.com/ndownloader/files/12352241
-        mv 12352241 train_feature.hdf5.part3
-        wget -q https://figshare.com/ndownloader/files/12988010
-        mv 12988010 train_elements.tsv.gz
-
-        # get test features and elements
-        wget -q https://figshare.com/ndownloader/files/12352265
-        mv 12352265 test_feature.hdf5
-        wget -q https://figshare.com/ndownloader/files/13005854
-        mv 13005854 PCAWG_test_genomic_elements.bed12.gz
-
-        # get callable sites
-        wget -q https://figshare.com/ndownloader/files/13005797
-        mv 13005797 callable.bed.gz
+                                     --channel default -c smshuai -y \
+                                     driverpower==1.0.2 \
+                                     numpy==1.20.1 pandas==1.2.4 \
+                                     pyBigWig==0.3.18 pyranges==0.0.117 pyfaidx==0.7.0
         
 %test
     driverpower -h
