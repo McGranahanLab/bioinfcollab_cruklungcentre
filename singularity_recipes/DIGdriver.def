@@ -1,0 +1,31 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+        Main software:
+        DIGdriver        v.1.0.0          https://github.com/maxwellsh/DIGDriver
+        accesed on 21.07.2022
+
+        Example run:
+        DigDriver.py --help
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%runscript
+        exec /opt/conda/bin/python "$@"
+
+%post
+        apt-get update && apt-get install -y git
+
+        /opt/conda/bin/conda install python=3.7
+
+        /opt/conda/bin/conda install -c mutation_density -c bioconda \
+                                     -c conda-forge -y digdriver
+
+        # Install all the required R packages
+        R -e "install.packages(c('Rcpp', 'fs', 'usethis'), repos='http://cran.rstudio.com/')"
+        R -e "install.packages(c('pkgload', 'xml2', 'htmltools'), repos='http://cran.rstudio.com/')"
+        R -e "install.packages('devtools', repos='http://cran.rstudio.com/')"
+        R -e "devtools::install_github('im3sanger/dndscv')"
