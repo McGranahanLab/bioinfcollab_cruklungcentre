@@ -3,11 +3,11 @@ From: continuumio/miniconda3
 
 %help
         Main software:
-        DIGdriver        v.1.0.0          https://github.com/maxwellsh/DIGDriver
-        accesed on 21.07.2022
+        DIGdriver        v.0.1          https://github.com/maxwellsh/DIGDriver
 
         Example run:
         DigDriver.py --help
+        DigPreprocess.py --help
 
 %labels
         CREATOR     Maria Litovchenko
@@ -17,15 +17,46 @@ From: continuumio/miniconda3
         exec /opt/conda/bin/python "$@"
 
 %post
-        apt-get update && apt-get install -y git
+        apt-get update && apt-get install -y git autoconf gcc git make ssh \
+                wget vim build-essential software-properties-common \
+                ca-certificates libssl-dev libcurl4-gnutls-dev \
+                libatlas-base-dev libffi-dev libxml2-dev \
+                libncurses5-dev libsm6 libxrender1 libfontconfig1 \
+                libxt6 libtcl8.6 libtk8.6 glibc-source 
 
         /opt/conda/bin/conda install python=3.7
+        /opt/conda/bin/conda install -c bioconda -c r pybedtools \
+                                     r-rcurl r-devtools 
+        # install from pip for speed
+        /opt/conda/bin/pip install pybbi h5py numpy pandas scipy \
+                                   pysam statsmodels tables
 
-        /opt/conda/bin/conda install -c mutation_density -c bioconda \
-                                     -c conda-forge -y digdriver
+
+        # modify DIGDriver so that DigPreprocess.py would accept custom dNdScv 
+        # database as an argument --refdb
+        git clone https://github.com/maxwellsh/DIGDriver
+        cd DIGDriver/scripts/
+        sed -i "s/# parse_d.add_argument('refdb'/parse_d.add_argument('refdb'/g" DigPreprocess.py
+        sed -i "s/cmd = \['mutationFunction.R', args.fmut, refdb,/# cmd = \['mutationFunction.R', args.fmut, refdb,/g" DigPreprocess.py
+        sed -i "s/# cmd = \['mutationFunction.R', args.fmut, args.refdb/cmd = \['mutationFunction.R', args.fmut, args.refdb/g" DigPreprocess.py
+        cd ../
+        python setup.py install
 
         # Install all the required R packages
-        R -e "install.packages(c('Rcpp', 'fs', 'usethis'), repos='http://cran.rstudio.com/')"
-        R -e "install.packages(c('pkgload', 'xml2', 'htmltools'), repos='http://cran.rstudio.com/')"
-        R -e "install.packages('devtools', repos='http://cran.rstudio.com/')"
-        R -e "devtools::install_github('im3sanger/dndscv')"
+        Rscript -e "install.packages(c('data.table', 'argparse', 'RCurl'), \
+                    repos = 'http://cran.us.r-project.org', quietly = T)"
+        Rscript -e "install.packages(c('BiocManager'), \
+                    repos = 'http://cran.us.r-project.org', quietly = T, \
+                    dependencies = T)"
+        # installation of GenomicRanges from Bioconductor
+        Rscript -e "install.packages(c('openssl', 'XML', 'xml2', 'httr'), \
+                    repos = 'http://cran.us.r-project.org', quietly = T)"
+        Rscript -e "BiocManager::install(c('biomaRt', 'rtracklayer', \
+                    'BiocFileCache'), ask = F, update = F)"
+        Rscript -e "BiocManager::install(c('GenomicRanges', 'GenomeInfoDb', \
+                     'Biostrings'), ask = F, update = F)"
+        Rscript -e "BiocManager::install(c('seqinr', 'poilog', 'plyr'), ask = F, \
+                     update = F)" 
+
+        # installation of dNdScv package from github
+        Rscript -e "Sys.setenv(TAR = '/bin/tar');devtools::install_github('im3sanger/dndscv')"
