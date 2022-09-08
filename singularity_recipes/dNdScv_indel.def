@@ -13,25 +13,37 @@ From: rstudio/r-base:4.0-focal
 
 %post 
   apt-get update && apt-get install -y git libssl-dev libxml2-dev  \
-                                       software-properties-common
+                                       software-properties-common \
+                                       libfontconfig1-dev \
+                                       build-essential libcurl4-gnutls-dev \
+                                       libxml2-dev libssl-dev \
+                                       libharfbuzz-dev libfribidi-dev \
+                                       libfreetype6-dev libpng-dev \
+                                       libtiff5-dev libjpeg-dev
+
   add-apt-repository ppa:deadsnakes/ppa
   apt-get update -y
   apt-get install -y python3.8
   
   # installation of GenomicRanges from Bioconductor
-  Rscript -e "install.packages(c('data.table', 'argparse'), repos = 'http://cran.us.r-project.org', quietly = T)"
+  Rscript -e "install.packages(c('argparse', 'data.table', 'devtools', 'httr',\
+                                 'openssl', 'XML', 'xml2'), quietly = T,\
+                                 repos = 'http://cran.us.r-project.org')"
+  Rscript -e "install.packages(c('BiocManager'),\
+             repos = 'http://cran.us.r-project.org', quietly = T,\
+             dependencies = T)"
 
-  Rscript -e "install.packages(c('openssl', 'XML', 'xml2', 'httr'), repos = 'http://cran.us.r-project.org', quietly = T)"
+  Rscript -e "BiocManager::install(c('BiocFileCache', 'biomaRt',\
+                                     'GenomicRanges', 'poilog', 'plyr',\
+                                     'rtracklayer', 'seqinr',\
+                                     'TxDb.Hsapiens.UCSC.hg19.knownGene',\
+                                     'TxDb.Hsapiens.UCSC.hg38.knownGene'),\
+                                     ask = F, update = F)"
 
-  Rscript -e "install.packages(c('BiocManager'), repos = 'http://cran.us.r-project.org', quietly = T, dependencies = T)"
+  # indel version
+  # git clone https://github.com/marialitovchenko/dNdScv_0.1.0_indel.git
+  ## installation of modified dNdScv package from github
+  # Rscript -e "install.packages('dNdScv_0.1.0_indel', repos = NULL, type = 'source')"
 
-  Rscript -e "BiocManager::install(c('biomaRt', 'rtracklayer', 'BiocFileCache'), ask = F, update = F)"
-
-  Rscript -e "BiocManager::install(c('GenomicRanges', 'TxDb.Hsapiens.UCSC.hg38.knownGene'), ask = F, update = F)"
-
-  Rscript -e "BiocManager::install(c('seqinr', 'poilog', 'plyr'), ask = F, update = F)" 
-
-  git clone https://github.com/marialitovchenko/dNdScv_0.1.0_indel.git
-
-  # installation of modified dNdScv package from github
-  Rscript -e "install.packages('dNdScv_0.1.0_indel', repos = NULL, type = 'source')"
+  # normal version
+  Rscript -e "library(devtools); install_github('im3sanger/dndscv')"

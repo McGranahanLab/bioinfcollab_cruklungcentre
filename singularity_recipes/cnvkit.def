@@ -34,14 +34,13 @@ From: continuumio/miniconda3
                                      scipy=1.6.0 pandas=1.2.1 \
                                      pyfaidx=0.5.9.2 pysam=0.16.0.1
 
-        wget https://bioconductor.org/packages/release/bioc/src/contrib/BiocGenerics_0.36.0.tar.gz
-        wget https://bioconductor.org/packages/release/bioc/src/contrib/S4Vectors_0.28.1.tar.gz
-        R -e 'install.packages("BiocGenerics_0.36.0.tar.gz", repos = NULL, type = "source")'
-        R -e 'install.packages("S4Vectors_0.28.1.tar.gz", repos = NULL, type = "source")'
+        wget https://bioconductor.org/packages/release/bioc/src/contrib/BiocGenerics_0.42.0.tar.gz
+        wget https://bioconductor.org/packages/release/bioc/src/contrib/S4Vectors_0.34.0.tar.gz
+        R -e 'install.packages("BiocGenerics_0.42.0.tar.gz", repos = NULL, type = "source")'
+        R -e 'install.packages("S4Vectors_0.34.0.tar.gz", repos = NULL, type = "source")'
         R -e 'install.packages("BiocManager")'
         R -e 'BiocManager::install(c("GenomicRanges"))'
         R -e 'BiocManager::install(c("DNAcopy"))'
-
 
         /opt/conda/bin/conda install cnvkit==0.9.8
 
