@@ -22,15 +22,16 @@ From: continuumio/miniconda3
                 ca-certificates libssl-dev libcurl4-gnutls-dev \
                 libatlas-base-dev libffi-dev libxml2-dev \
                 libncurses5-dev libsm6 libxrender1 libfontconfig1 \
-                libxt6 libtcl8.6 libtk8.6 glibc-source 
+                libxt6 libtcl8.6 libtk8.6 glibc-source libharfbuzz-dev \
+                libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev \
+                libjpeg-dev fontconfig cmake libfontconfig1-dev xclip libtiff5
 
         /opt/conda/bin/conda install python=3.7
         /opt/conda/bin/conda install -c bioconda -c r pybedtools \
                                      r-rcurl r-devtools 
         # install from pip for speed
-        /opt/conda/bin/pip install pybbi h5py numpy pandas scipy \
-                                   pysam statsmodels tables
-
+        /opt/conda/bin/pip install matplotlib==3.5.3 pybbi h5py numpy pandas \
+                                   scipy pysam statsmodels tables
 
         # modify DIGDriver so that DigPreprocess.py would accept custom dNdScv 
         # database as an argument --refdb
@@ -43,20 +44,18 @@ From: continuumio/miniconda3
         python setup.py install
 
         # Install all the required R packages
-        Rscript -e "install.packages(c('data.table', 'argparse', 'RCurl'), \
-                    repos = 'http://cran.us.r-project.org', quietly = T)"
-        Rscript -e "install.packages(c('BiocManager'), \
-                    repos = 'http://cran.us.r-project.org', quietly = T, \
+        Rscript -e "install.packages(c('argparse', 'data.table', 'httr',\
+                                       'openssl', 'XML', 'xml2'), quietly = T,\
+                                       repos = 'http://cran.us.r-project.org')"
+        Rscript -e "install.packages(c('BiocManager'),\
+                    repos = 'http://cran.us.r-project.org', quietly = T,\
                     dependencies = T)"
-        # installation of GenomicRanges from Bioconductor
-        Rscript -e "install.packages(c('openssl', 'XML', 'xml2', 'httr'), \
-                    repos = 'http://cran.us.r-project.org', quietly = T)"
-        Rscript -e "BiocManager::install(c('biomaRt', 'rtracklayer', \
-                    'BiocFileCache'), ask = F, update = F)"
-        Rscript -e "BiocManager::install(c('GenomicRanges', 'GenomeInfoDb', \
-                     'Biostrings'), ask = F, update = F)"
-        Rscript -e "BiocManager::install(c('seqinr', 'poilog', 'plyr'), ask = F, \
-                     update = F)" 
+        Rscript -e "BiocManager::install(c('BiocFileCache', 'biomaRt',\
+                                           'GenomicRanges', 'poilog', 'plyr',\
+                                           'rtracklayer', 'seqinr',\
+                                           'TxDb.Hsapiens.UCSC.hg19.knownGene',\
+                                           'TxDb.Hsapiens.UCSC.hg38.knownGene'),\
+                                           ask = F, update = F)"
 
         # installation of dNdScv package from github
-        Rscript -e "Sys.setenv(TAR = '/bin/tar');devtools::install_github('im3sanger/dndscv')"
+        Rscript -e "Sys.setenv(TAR = '/bin/tar');library(devtools);install_github('im3sanger/dndscv')"
