@@ -1,0 +1,55 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        MutSig2CV_NC (PCAWG)	v.2_NC	https://github.com/broadinstitute/getzlab-PCAWG-MutSig2CV_NC
+
+        Supported by:
+        Matlab runtime R2016a
+
+        Example run:
+        singularity exec mutsig2cv_nc.sif /./MutSig2CV_NC
+        
+        !!! ATTENTION !!!
+        MutSig2CV_NC requires pre-generated covariates and coverage models, 
+        which are too big to put into container. Follow instructions below to
+        get the data
+        1) Install gsutil:
+        https://cloud.google.com/storage/docs/access-public-data#gsutil
+        2) List avaible models:
+		gsutil ls gs://getzlab-pcawg-mutsig2cv_nc/covmodels/ | grep Lung | sed 's/^/gsutil cp -r /g' | sed 's/$/ ./'
+		3) Select Lung models:
+		gsutil ls gs://getzlab-pcawg-mutsig2cv_nc/covmodels/ | grep Lung | sed 's/^/gsutil cp -r /g' | sed 's/$/ ./' 
+		4) Create commands to copy Lung data:
+		gsutil ls gs://getzlab-pcawg-mutsig2cv_nc/covmodels/ | grep Lung | sed 's/^/gsutil cp -r /g' | sed 's/$/ ./' 
+		5) Run commands from the screen to download the data
+
+%labels
+        CREATOR     Maria Litovchenko
+        ORGANIZATION    UCL
+
+%post
+		apt-get update -y 
+		apt-get upgrade -y
+		apt-get install -y build-essential wget unzip libstdc++6
+
+		cd bin
+		mkdir Matlab_R2016a
+		cd Matlab_R2016a
+		wget https://ssd.mathworks.com/supportfiles/downloads/R2016a/deployment_files/R2016a/installers/glnxa64/MCR_R2016a_glnxa64_installer.zip
+		unzip MCR_R2016a_glnxa64_installer.zip
+		rm MCR_R2016a_glnxa64_installer.zip
+		./install -mode silent -agreeToLicense yes
+		cd ../../
+
+		wget https://github.com/broadinstitute/getzlab-PCAWG-MutSig2CV_NC/raw/master/bin/MutSig2CV_NC
+		chmod +x MutSig2CV_NC
+
+%environment
+		MCRROOT=/usr/local/MATLAB/MATLAB_Runtime/v901/
+		export LD_LIBRARY_PATH=.:${MCRROOT}/runtime/glnxa64
+		export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRROOT}/bin/glnxa64
+		export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRROOT}/sys/os/glnxa64
+		export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRROOT}/sys/opengl/lib/glnxa64
+		export LDPATH_PREFIX='${LD_LIBRARY_PATH}/sys/opengl/lib/$ARCH'
