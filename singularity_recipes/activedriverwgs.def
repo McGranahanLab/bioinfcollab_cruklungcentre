@@ -1,0 +1,49 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%help
+  A container with ActiveDriverWGS 
+  https://cran.r-project.org/web/packages/ActiveDriverWGS/vignettes/ActiveDriverWGSR.html
+
+%labels
+  CREATOR         Maria Litovchenko
+  ORGANIZATION    UCL CANCER INSTITUTE
+  EMAIL           m.litovchenko@ucl.ac.uk
+  VERSION         v0.0.1  
+
+%post 
+  apt-get update && apt-get install -y git autoconf gcc git make ssh \
+                wget vim build-essential software-properties-common \
+                ca-certificates libssl-dev libcurl4-gnutls-dev \
+                libatlas-base-dev libffi-dev libxml2-dev \
+                libncurses5-dev libsm6 libxrender1 libfontconfig1 \
+                libxt6 libtcl8.6 libtk8.6 glibc-source libharfbuzz-dev \
+                libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev \
+                libjpeg-dev fontconfig cmake libfontconfig1-dev xclip libtiff5
+
+  # it is best to install biocmanager and R packages with big data bases 
+  # through conda because biocmanager installation removes devtools and 
+  # download of big packages may not be successfull if done directly from R
+  /opt/conda/bin/conda install python=3.7
+  /opt/conda/bin/conda install -c bioconda -c r -c conda-forge r-base==4.1.0 \
+                               r-curl==4.3.2 r-devtools==2.4.2 r-rlang==1.0.5 \
+                               r-biocmanager==1.30.18 \
+                               bioconductor-bsgenome.hsapiens.ucsc.hg38==1.4.4 \
+                               bioconductor-bsgenome.hsapiens.ucsc.hg19==1.4.3 \
+                               bioconductor-bsgenome.mmusculus.ucsc.mm10==1.4.3 \
+                               bioconductor-bsgenome.mmusculus.ucsc.mm9==1.4.0
+
+  # installation of CRAN packages
+  Rscript -e "require(devtools);install_version('argparse', version = '2.0.3', repos = 'http://cran.us.r-project.org')"
+  Rscript -e "require(devtools);install_version('data.table', version = '1.14.0', repos = 'http://cran.us.r-project.org')"
+
+ # install bioconductor packages
+  Rscript -e "BiocManager::install('Biostrings', version = '3.14')"
+  Rscript -e "BiocManager::install('BSgenome', version = '3.14')"
+  Rscript -e "BiocManager::install('GenomicRanges', version = '3.14')"
+  Rscript -e "BiocManager::install('GenomeInfoDb', version = '3.14')"
+  Rscript -e "BiocManager::install('IRanges', version = '3.14')"
+  Rscript -e "BiocManager::install('S4Vectors', version = '3.14')"
+
+  Rscript -e "require(devtools);install_version('ActiveDriverWGS', version = '1.2.0', repos = 'http://cran.us.r-project.org')"
+ 
