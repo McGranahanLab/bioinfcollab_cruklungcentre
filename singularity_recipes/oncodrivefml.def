@@ -2,26 +2,28 @@ Bootstrap: docker
 From: continuumio/miniconda3
 
 %help
-        Main software:
-        oncodrivefml        v.2.2          https://bitbucket.org/bbglab/oncodrivefml/src/master/
-        oncodriveclustl     v              https://bitbucket.org/bbglab/oncodriveclustl/src/master/
+  Main software:
+    oncodrivefml        v.2.4.0          https://bitbucket.org/bbglab/oncodrivefml/src/master/
+    oncodriveclustl     v1.1.3           https://bitbucket.org/bbglab/oncodriveclustl/src/master/
 
-        Supported by:
-        Cyton
-
-        Example run:
-        oncodrivefml --help
-        oncodriveclust --help
+  Example run:
+    oncodrivefml --help
+    oncodriveclust --help
 
 %labels
-        CREATOR     Maria Litovchenko
-        ORGANIZATION    UCL
+  CREATOR     Maria Litovchenko
+  ORGANIZATION    UCL
 
-%runscript
-        exec /opt/conda/bin/python "$@"
+%environment
+  . /opt/conda/etc/profile.d/conda.sh
+  conda activate oncodrivefml_env
 
 %post
-        apt-get update && apt-get install -y procps libcurl4-openssl-dev \
-                                             libssl-dev gcc libz-dev
-        /opt/conda/bin/conda install python=3.7
-        /opt/conda/bin/pip3 install oncodrivefml oncodriveclustl --use-feature=2020-resolver 
+  apt-get update && apt-get install -y procps libcurl4-openssl-dev \
+    libssl-dev gcc libz-dev 
+  
+  . /opt/conda/etc/profile.d/conda.sh
+  conda create -n oncodrivefml_env
+  conda activate oncodrivefml_env
+  conda install python=3.6
+  pip3 install oncodrivefml==2.4.0 oncodriveclustl==1.1.3 
