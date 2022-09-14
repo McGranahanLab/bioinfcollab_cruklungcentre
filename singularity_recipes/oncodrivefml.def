@@ -26,4 +26,4 @@ From: continuumio/miniconda3
   conda create -n oncodrivefml_env
   conda activate oncodrivefml_env
   conda install python=3.6
-  pip3 install oncodrivefml==2.4.0 oncodriveclustl==1.1.3 
+  pip3 install oncodrivefml==2.3.0 oncodriveclustl==1.1.1
