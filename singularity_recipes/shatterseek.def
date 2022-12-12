@@ -1,0 +1,31 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%labels
+  CREATOR         Maria Litovchenko
+  ORGANIZATION    UCL CANCER INSTITUTE
+  EMAIL           m.litovchenko@ucl.ac.uk
+  VERSION         v0.0.1
+
+%post
+  apt-get update && apt-get install -y git autoconf gcc git make ssh \
+                wget vim build-essential software-properties-common \
+                ca-certificates libssl-dev libcurl4-gnutls-dev \
+                libatlas-base-dev libffi-dev libxml2-dev \
+                libncurses5-dev libsm6 libxrender1 libfontconfig1 \
+                libxt6 libtcl8.6 libtk8.6 glibc-source libharfbuzz-dev \
+                libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev \
+                libjpeg-dev fontconfig cmake libfontconfig1-dev xclip libtiff5
+
+  # it is best to install biocmanager and R packages with big data bases
+  # through conda because biocmanager installation removes devtools and
+  # download of big packages may not be successfull if done directly from R
+  /opt/conda/bin/conda install python=3.7
+  /opt/conda/bin/conda install -c bioconda -c r -c conda-forge r-base==4.1.0 \
+                               r-curl==4.3.2 r-devtools==2.4.2 r-rlang==1.0.5 \
+                               r-biocmanager==1.30.18 
+
+   Rscript -e "BiocManager::install(c('BiocGenerics', 'graph', 'S4Vectors', 'IRanges', 'GenomicRanges'))"
+   Rscript -e "install.packages(c('methods', 'MASS', 'ggplot2', 'grid', 'gridExtra'), repos='http://cran.rstudio.com/')"
+   Rscript -e "library(devtools);install_github('parklab/ShatterSeek')"
+
