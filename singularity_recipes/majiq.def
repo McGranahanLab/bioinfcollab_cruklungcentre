@@ -31,8 +31,16 @@ From: continuumio/miniconda3
         git clone https://bitbucket.org/biociphers/majiq_stable.git
         cd majiq_stable/
         git checkout 54d187954faa76a36f07d763ac9a140b5cac58b9
+        
         /opt/conda/bin/pip install --no-cache-dir -U pip
         /opt/conda/bin/pip install --no-cache-dir -r requirements.txt
+        /opt/conda/bin/pip uninstall -y Flask Jinja2 Werkzeug MarkupSafe \
+                                        itsdangerous
+        /opt/conda/bin/pip install --no-cache-dir Flask==1.0.2 Jinja2==2.10 \
+                                                  Werkzeug==0.16.0 \
+                                                  MarkupSafe==2.0.1 \
+                                                  itsdangerous==2.0.1
+
         # there is a bug in setup script
         sed -i "120 a \    packages=['voila', 'majiq']," setup.py 
         python3 setup.py install
