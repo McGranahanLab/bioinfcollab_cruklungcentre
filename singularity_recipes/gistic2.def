@@ -1,0 +1,34 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%help
+        Main software:
+        GISTIC2             v.2.0.23        https://broadinstitute.github.io/gistic2/
+
+
+%labels
+        CREATOR Maria Litovchenko
+
+%post
+        apt-get -qq -y update
+        apt update
+        apt-get -qq -y install wget gcc libncurses5-dev zlib1g-dev libbz2-dev \
+                               liblzma-dev make default-jdk tabix unzip
+
+        mkdir GISTIC_2_0_23
+        wget ftp://ftp.broadinstitute.org:21/pub/GISTIC2.0/GISTIC_2_0_23.tar.gz
+        tar zxf GISTIC_2_0_23.tar.gz
+
+        cd refgenefiles/
+        wget https://github.com/sbamin/canine_gistic2/files/7051592/mm10.zip
+        unzip mm10.zip
+        cd ../        
+
+        cd MCR_Installer
+        unzip MCRInstaller.zip
+
+        ./install -mode silent -agreeToLicense yes
+
+%environment
+        export PATH=$PATH:/bin/samtools-1.10/bin/
+        export PATH=$PATH:/bin/bwa-0.7.17/
