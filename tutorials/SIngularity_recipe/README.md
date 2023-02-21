@@ -1,5 +1,8 @@
 # Anatomy of Singularity's recipe
 
+## Video tutorial is available
+Video tutorial accompanies this text tutorial. It is available [here](https://disk.yandex.ru/i/B4vw60S2bBkXqQ)
+
 ## What is Singularity?
 > [Singularity](https://sylabs.io/) is a program which packages (aka *containerization*) almost any software in a file and therefore makes it **portable** and **reproducible**. 
 
