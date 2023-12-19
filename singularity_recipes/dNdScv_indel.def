@@ -1,9 +1,11 @@
 Bootstrap: docker
-From: rstudio/r-base:4.0-focal
+From: continuumio/miniconda3
 
 %help
   A container with modified version of dNdScv (https://github.com/im3sanger/dndscv)
   with expected number of indels added to the output 
+
+  NOT COMPLETED RECIPE!!!
 
 %labels
   CREATOR         Maria Litovchenko
@@ -12,37 +14,37 @@ From: rstudio/r-base:4.0-focal
   VERSION         v0.0.1  
 
 %post 
-  apt-get update && apt-get install -y git libssl-dev libxml2-dev  \
-                                       software-properties-common \
-                                       libfontconfig1-dev \
-                                       build-essential libcurl4-gnutls-dev \
-                                       libharfbuzz-dev libfribidi-dev \
-                                       libfreetype6-dev libpng-dev \
-                                       libtiff5-dev libjpeg-dev
+  apt-get update && apt-get install -y git autoconf gcc git make ssh \
+                wget vim build-essential software-properties-common \
+                ca-certificates libssl-dev libcurl4-gnutls-dev \
+                libatlas-base-dev libffi-dev libxml2-dev \
+                libncurses5-dev libsm6 libxrender1 libfontconfig1 \
+                libxt6 libtcl8.6 libtk8.6 glibc-source libharfbuzz-dev \
+                libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev \
+                libjpeg-dev fontconfig cmake libfontconfig1-dev xclip libtiff5
 
-  add-apt-repository ppa:deadsnakes/ppa
-  apt-get update -y
-  apt-get install -y python3.8
-  
-  # installation of GenomicRanges from Bioconductor
-  Rscript -e "install.packages(c('argparse', 'data.table', 'devtools', 'httr',\
-                                 'openssl', 'XML', 'xml2'), quietly = T,\
-                                 repos = 'http://cran.us.r-project.org')"
-  Rscript -e "install.packages(c('BiocManager'),\
-             repos = 'http://cran.us.r-project.org', quietly = T,\
-             dependencies = T)"
+  /opt/conda/bin/conda install python=3.7
+  /opt/conda/bin/conda install -c bioconda -c r -c conda-forge r-base==4.1.0 \
+                               r-curl==4.3.2 r-devtools==2.4.2 r-rlang==1.0.5 \
+                               pybedtools==0.9.0
 
-  Rscript -e "BiocManager::install(c('BiocFileCache', 'biomaRt',\
-                                     'GenomicRanges', 'poilog', 'plyr',\
-                                     'rtracklayer', 'seqinr',\
-                                     'TxDb.Hsapiens.UCSC.hg19.knownGene',\
-                                     'TxDb.Hsapiens.UCSC.hg38.knownGene'),\
-                                     ask = F, update = F)"
+  # installation of CRAN packages
+  Rscript -e "require(devtools);install_version('BiocManager', version = '1.30.18', repos = 'http://cran.us.r-project.org')"
+  Rscript -e "BiocManager::install(version = '3.13', ask = FALSE)"
+  Rscript -e "require(devtools);install_version('argparse', version = '2.0.3', repos = 'http://cran.us.r-project.org')"
+  Rscript -e "require(devtools);install_version('data.table', version = '1.14.0', repos = 'http://cran.us.r-project.org')"
 
   # indel version
   # git clone https://github.com/marialitovchenko/dNdScv_0.1.0_indel.git
   ## installation of modified dNdScv package from github
   # Rscript -e "install.packages('dNdScv_0.1.0_indel', repos = NULL, type = 'source')"
 
-  # normal version
-  Rscript -e "library(devtools); install_github('im3sanger/dndscv')"
+  # install bioconductor packages
+  Rscript -e "BiocManager::install('biomaRt', version = '3.13')"
+  Rscript -e "BiocManager::install('GenomicRanges', version = '3.13')"
+  Rscript -e "BiocManager::install('poilog', version = '3.13')"
+  Rscript -e "BiocManager::install('plyr', version = '3.13')"
+  Rscript -e "BiocManager::install('rtracklayer', version = '3.13')"
+  Rscript -e "BiocManager::install('seqinr', version = '3.13')"
+  Rscript -e "BiocManager::install('TxDb.Hsapiens.UCSC.hg19.knownGene', version = '3.13')"
+  Rscript -e "BiocManager::install('TxDb.Hsapiens.UCSC.hg38.knownGene', version = '3.13')"
