@@ -2,7 +2,7 @@
 1. Get your computer science (CS) account here: https://tsg.cs.ucl.ac.uk/apply-for-an-account/. Put Nicholas McGranahan as “Dept. of Computer Science Sponsor”. It will take a couple of days to get an answer. Also, you should have a cell phone number so they could text you the password.
 2. After you have your computer science account, apply for a computer science cluster account: https://hpc.cs.ucl.ac.uk/account-form/. Do not fill in “Machine IP” or “Software requirements” fields.
 3. In meantime, you can read carefully a user guide to the HPC here: https://hpc.cs.ucl.ac.uk/ (**username: hpc, password: comic**)
-4. Once you have your cluster account, you can **apply for storage space for your project**, if known and needed, here: https://hpc.cs.ucl.ac.uk/storage-form/. Usually project storage space comes in batches of 10Tb, so if you'd like more, it's wise to ask for several project spaces, each size of 10Tb. Once you get an email that your inquiry is satisfied, you will be able to find folder with your project at `/SAN/colcc/`. **Be sure to write down your project folder name**, because sometimes then you do `ls -l /SAN/colcc/` you won't be able to see all project folders.
+4. Once you have your cluster account, you can **apply for storage space for your project**, if known and needed, here: https://hpc.cs.ucl.ac.uk/storage-form/. Project space of any size can be requested, but please estimate how much you really need. Once you get an email that your inquiry is satisfied, you will be able to find folder with your project at `/SAN/colcc/`. **Be sure to write down your project folder name**, because sometimes then you do `ls -l /SAN/colcc/` you won't be able to see all project folders.
 
 Before accessing to the server, please read this: https://hpc.cs.ucl.ac.uk/quickstart/ and this https://hpc.cs.ucl.ac.uk/full-guide/. We usually use `gamble` for our computations. However, if `gamble` isn't available, try other servers.
 
@@ -137,5 +137,5 @@ qrsh -l h_vmem=8G,tmem=8G,h_rt=1:0:0
 It may take some time to get an interactive session, this time also depends on amout of currently running jobs and RAM you requested. Then you get interactive session, beginning string of your bash terminal should change from `[your_user_name@gamble]$` to for example `[your_user_name@moe-609-7 ]$`, where `moe-609-7` is a node name. In the beginning of your interactive session you will be at the root of the server and not in the directory you called `qrsh` from, so you'll  need to `cd /SAN/colcc/your_project_folder` to do your work.
 
 ### Get help ###
-Ed Martin (`e.martin@cs.ucl.ac.uk`) is our contact for the cluster questions, he’s very responsive. But please don’t abuse this link: first ask people in the lab.
+Ask around the lab first. If you need to contact the cluster support, please use: cluster-support@cs.ucl.ac.uk.
 
