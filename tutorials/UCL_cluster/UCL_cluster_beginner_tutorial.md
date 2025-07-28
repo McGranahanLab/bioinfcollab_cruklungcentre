@@ -172,19 +172,32 @@ there `-pe smp` option is not specified, and therefore considered just 1 core in
 * To copy from terminal:
                            
 ```
+# we recommend using rsync
 # to copy a single file from UCL cluster:
-scp <your_user_name>@gamble:/SAN/colcc/<path_to_your_file> . 
+rsync [options] <your_user_name>@<remote_machine>:/path/to/file/ /path/to/local/destination
 # it will only work if your set up ssh jump as described in the newcomers guide
-# dot means copy in this folder
 
-# to copy a folder from UCL cluster:
-scp -r <your_user_name>@gamble:/SAN/colcc/<path_to_your_folder> . 
+# to copy a file to UCL cluster, reverse the order of files after rsync:
 
-# to copy a file to UCL cluster:
-scp <your file> <your_user_name>@gamble:/SAN/colcc/<path_to_your_folder>
+rsync [options] /path/to/local/file <your_user_name>@<remote_machine>:/path/to/remote/destination
 
-# to copy a folder to UCL cluster:
-scp -r <your folder> <your_user_name>@gamble:/SAN/colcc/<path_to_your_folder>
+note that you will need to supply your username and password for this operation
+```
+
+If you don't remember the options rsync is using, or the exact syntax, we recommend creating a helper function and saving it in your shell configuration files. For example, modify your .bashrc or .zshrc by adding this function at the end:
+
+```
+rsync_ucl() {
+    ucl_path="$1"
+    rsync -avh --progress cdarwin@gamble.cs.ucl.ac.uk:"${ucl_path}" .
+}
+```
+In the example above, replace cdarwin with your UCL username. You might also need to use different remote machine name, here we are using gamble.
+
+Now, if you want to copy file from ucl to your current working directory, simply run:
+
+```
+rsync_ucl /path/to/my/file/on/cluster
 ```
 
 ## How to run GATK and other java applications
